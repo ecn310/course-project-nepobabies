@@ -34,3 +34,5 @@ ________________________________________
 ### Methods for resolving an impasse:
 - Step 1: The group members will isolate areas of disagreement, and the group will come to a consensus. If no consensus is reached, proceed to Step 2.
 - Step 2: The group members will compromise on the area of disagreement and seek help as needed.
+
+Signature: Ryan Seely

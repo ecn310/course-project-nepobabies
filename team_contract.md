@@ -36,3 +36,4 @@ ________________________________________
 - Step 2: The group members will compromise on the area of disagreement and seek help as needed.
 
 Signature: Ryan Seely
+Signature: Rachel Rabinowitz

@@ -7,7 +7,7 @@ keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
 jobkeep jobhonor jobinter fndjob2 thisjob7 wrkwell paind16 paind10 paind80 ///
 maind80 maind10 indus10 major1 major2 voedcol voedncol colmajr1 colmajr2 ///
 joblose yearsjob covemply race parborn granborn wealth opwlth income72 ///
-income77 income82 income86 income91 income98 income06 income16 coninc realinc///
+income77 income82 income86 income91 income98 income06 income16 coninc realinc ///
 povline incdef wlthpov progtax oprich inequal3 taxrich taxshare contrich ///
 class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
 skiltest wojobyrs occmobil lastslf gender1 gender2 gender3 gender4 gender5 ///
@@ -28,3 +28,11 @@ summarize fndjob2 educ dateintv major1 paeduc maeduc industry indus80 indus07 in
 **this examines the relationship between education and finding a job through a relative
 graph box educ, over (fndjob2)
 
+save "GSSclean_noRDs.dta" , replace
+
+**paind10 maind10 indus10 
+**Creating dummy variable for nepobaby = 1 if respondent is in the same industry as their mother or father, 0 otherwise
+gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
+
+**Creating new date variable to match with recession dates
+gen fulldate = string(dateintv)+substr(string(year),-2)

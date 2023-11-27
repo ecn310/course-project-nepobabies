@@ -35,4 +35,5 @@ save "GSSclean_noRDs.dta" , replace
 gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
 
 **Creating new date variable to match with recession dates
-gen fulldate = string(dateintv)+substr(string(year),-2)
+gen flintdate = string(dateintv) + substr(string(year), -2, 2)
+

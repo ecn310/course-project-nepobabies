@@ -32,6 +32,7 @@ save "GSSclean_noRDs.dta" , replace
 
 **paind10 maind10 indus10 
 **Creating dummy variable for nepobaby = 1 if respondent is in the same industry as their mother or father, 0 otherwise
+*** Use replace function to replace the value in indus10 with something other than "iap" if the value is missing
 gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
 
 **Creating a new variable for year hired
@@ -41,12 +42,22 @@ gen yearsjob_int = round(yearsjob)
 ** Creating variable for the year (yearsjob_int) respondents obtained job
 gen yearhire = (year - yearsjob_int)
 
+
+**Trying to create the full interview date as an integer so that it can be formatted as a stata date.
+egen flintdate = concat(dateintv year)
+gen flintdate_int = int(flintdate)
+
 **Creating new date variable for full interview date, including year.
 gen flintdate = string(dateintv) + string(year)
 
 **Getting rid of missing data
 drop if year < 1975
 drop if missing(dateintv)
+
+gen contains_non_numeric = regexm(flintdate, "[^0-9]")
+list flintdate contains_non_numeric
+
+gen flintdate_int = cond(contains_non_numeric == 0, int(flintdate), .)
 
 **Not working yet! But trying to create a variable that makes the full interview date variable into an integer
 gen flintdate_int = int(flintdate)
@@ -72,3 +83,4 @@ gen date_var = date(year, month, day)
 
 // Display the results
 list flintdate date_var
+

@@ -94,54 +94,54 @@ gen unemployrate = .
 
 *1975
 *January
-replace unemployrate = 8.1 if flintdate == 180
+replace unemployrate = 8.1 if ymintdate == 180
 *February 
-replace unemployrate = 8.1 if flintdate == 181
+replace unemployrate = 8.1 if ymintdate == 181
 *March 
-replace unemployrate = 8.6 if flintdate == 182
+replace unemployrate = 8.6 if ymintdate == 182
 *April 
-replace unemployrate = 8.8 if flintdate == 183
+replace unemployrate = 8.8 if ymintdate == 183
 *May 
-replace unemployrate = 9.0 if flintdate == 184
+replace unemployrate = 9.0 if ymintdate == 184
 *June 
-replace unemployrate = 8.8 if flintdate == 185
+replace unemployrate = 8.8 if ymintdate == 185
 *July 
-replace unemployrate = 8.6 if flintdate == 186
+replace unemployrate = 8.6 if ymintdate == 186
 *August 
-replace unemployrate = 8.4 if flintdate == 187
+replace unemployrate = 8.4 if ymintdate == 187
 *September 
-replace unemployrate = 8.4 if flintdate == 188
+replace unemployrate = 8.4 if ymintdate == 188
 *October 
-replace unemployrate = 8.4 if flintdate == 189
+replace unemployrate = 8.4 if ymintdate == 189
 *November 
-replace unemployrate = 8.3 if flintdate == 190
+replace unemployrate = 8.3 if ymintdate == 190
 *December 
-replace unemployrate = 8.2 if flintdate == 191
+replace unemployrate = 8.2 if ymintdate == 191
 
 *1976
 *January
-replace unemployrate = 7.9 if flintdate == 192
+replace unemployrate = 7.9 if ymintdate == 192
 *February 
-replace unemployrate = 7.7 if flintdate == 193
+replace unemployrate = 7.7 if ymintdate == 193
 *March 
-replace unemployrate = 7.6 if flintdate == 194
+replace unemployrate = 7.6 if ymintdate == 194
 *April 
-replace unemployrate = 7.7 if flintdate == 195
+replace unemployrate = 7.7 if ymintdate == 195
 *May 
-replace unemployrate = 7.4 if flintdate == 196
+replace unemployrate = 7.4 if ymintdate == 196
 *June 
-replace unemployrate = 7.6 if flintdate == 197
+replace unemployrate = 7.6 if ymintdate == 197
 *July 
-replace unemployrate = 7.8 if flintdate == 198
+replace unemployrate = 7.8 if ymintdate == 198
 *August 
-replace unemployrate = 7.8 if flintdate == 199
+replace unemployrate = 7.8 if ymintdate == 199
 *September 
-replace unemployrate = 7.6 if flintdate == 200
+replace unemployrate = 7.6 if ymintdate == 200
 *October 
-replace unemployrate = 7.7 if flintdate == 201
+replace unemployrate = 7.7 if ymintdate == 201
 *November 
-replace unemployrate = 7.8 if flintdate == 202
+replace unemployrate = 7.8 if ymintdate == 202
 *December 
-replace unemployrate = 7.8 if flintdate == 203
+replace unemployrate = 7.8 if ymintdate == 203
 
 

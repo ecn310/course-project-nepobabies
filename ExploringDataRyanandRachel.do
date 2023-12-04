@@ -80,6 +80,8 @@ gen ymintdate = ym(yearintv, monthintv)
 gen ymhiredate = ymintdate - (yearsjob * 12)
 
 *** Manual input of unemployment rates by month
+*** We must actually create the unemployment rates variable. It worked for me when I created the variable in the data editor but I did not save that. We must figure out how to do that. I imagine it will look something like...
+gen unemployrate = .
 
 *1975
 *January

@@ -85,6 +85,9 @@ gen ymintdate = ym(yearintv, monthintv)
 ** Creates a variable for the month and year a respondent was hired (assuming they were hired exactly the number of years ago they reported) which leaves us with 9,256 variables/.
 gen ymhiredate = ymintdate - (yearsjob * 12)
 
+** We can only perform analysis for the respondents who answered the `yearsjob` question.
+drop if missing(yearsjob)
+
 *** Manual input of unemployment rates by month
 *** We must actually create the unemployment rates variable. It worked for me when I created the variable in the data editor but I did not save that. We must figure out how to do that. I imagine it will look something like...
 gen unemployrate = .

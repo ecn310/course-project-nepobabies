@@ -35,52 +35,102 @@ save "GSSclean_noRDs.dta" , replace
 *** Use replace function to replace the value in indus10 with something other than "iap" if the value is missing
 gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
 
-**Creating a new variable for year hired
-**** Must make determination on missing variables, i.e. every four years yearsjob asked.
-gen yearsjob_int = round(yearsjob)
-
-** Creating variable for the year (yearsjob_int) respondents obtained job
-gen yearhire = (year - yearsjob_int)
-
-
-**Trying to create the full interview date as an integer so that it can be formatted as a stata date.
-egen flintdate = concat(dateintv year)
-gen flintdate_int = int(flintdate)
-
-**Creating new date variable for full interview date, including year.
-gen flintdate = string(dateintv) + string(year)
+keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
+jobkeep jobhonor jobinter fndjob2 thisjob7 wrkwell paind16 paind10 paind80 ///
+maind80 maind10 indus10 major1 major2 voedcol voedncol colmajr1 colmajr2 ///
+joblose yearsjob covemply race parborn granborn wealth opwlth income72 ///
+income77 income82 income86 income91 income98 income06 income16 coninc realinc ///
+povline incdef wlthpov progtax oprich inequal3 taxrich taxshare contrich ///
+class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
+skiltest wojobyrs occmobil lastslf gender1 gender2 gender3 gender4 gender5 ///
+gender6 gender7 gender8 gender9 gender10 gender11 gender12 gender13 gender14 ///
+gdjobsec thisjob2
+ 
+**paind10 maind10 indus10 
+**Creating dummy variable for nepobaby = 1 if respondent is in the same industry as their mother or father, 0 otherwise
+*** Use replace function to replace the value in indus10 with something other than "iap" if the value is missing
+gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
 
 **Getting rid of missing data
 drop if year < 1975
 drop if missing(dateintv)
 
-gen contains_non_numeric = regexm(flintdate, "[^0-9]")
-list flintdate contains_non_numeric
+* Convert dateintv to a string for easier manipulation
+gen dateintv_str = string(dateintv)
 
-gen flintdate_int = cond(contains_non_numeric == 0, int(flintdate), .)
+* Extract dayintv (last two digits)
+gen dayintv = real(substr(dateintv_str, -2, .))
 
-**Not working yet! But trying to create a variable that makes the full interview date variable into an integer
-gen flintdate_int = int(flintdate)
+* Extract monthintv based on the length of dateintv
+gen monthintv = .
+replace monthintv = real(substr(dateintv_str, 1, 1)) if length(dateintv_str) == 3
+replace monthintv = real(substr(dateintv_str, 1, 2)) if length(dateintv_str) == 4
 
-**Creating new variable for full hire date, including year.
-gen flhiredate = string(dateintv) + string(yearhire)
-**This variable includes the rounded values (.25 year and .75 years as 0 and 1 respectably)
-**There are many missing values for all respondents who have not answered the yearsjob question. Prof. Buzard? Drop it? Data cleaning needed.
+* Display the results
+browse dateintv dateintv_str dayintv monthintv year
 
-**Converting the full interview and hire dates into a Stata date format.
-gen flhiredate1 = date(substr(flhiredate, 3, .), "MDY")
-**Did not work.
+* Rename year variable for clarity
+rename year yearintv
 
-**Suggested code from ChatGPT to recode as Stata date format
-**Not working yet!
-// Extract day, month, and year components
-gen day = mod(flintdate, 100)
-gen month = floor(mod(flintdate/100, 100))
-gen year = floor(flintdate/10000)
+** This created a variable for the year and month a respondent was interviewed!
+** It does so in the format of a Stata date, where Jan. 1960 is considered 1 and every month's code after that = (months after Jan. 1960)
+gen ymintdate = ym(yearintv, monthintv)
 
-// Convert to Stata date variable
-gen date_var = date(year, month, day)
+** Creates a variable for the month and year a respondent was hired (assuming they were hired exactly the number of years ago they reported) which leaves us with 9,256 variables/.
+gen ymhiredate = ymintdate - (yearsjob * 12)
 
-// Display the results
-list flintdate date_var
+*** Manual input of unemployment rates by month
+
+*1975
+*January
+replace unemployrate = 8.1 if flintdate == 180
+*February 
+replace unemployrate = 8.1 if flintdate == 181
+*March 
+replace unemployrate = 8.6 if flintdate == 182
+*April 
+replace unemployrate = 8.8 if flintdate == 183
+*May 
+replace unemployrate = 9.0 if flintdate == 184
+*June 
+replace unemployrate = 8.8 if flintdate == 185
+*July 
+replace unemployrate = 8.6 if flintdate == 186
+*August 
+replace unemployrate = 8.4 if flintdate == 187
+*September 
+replace unemployrate = 8.4 if flintdate == 188
+*October 
+replace unemployrate = 8.4 if flintdate == 189
+*November 
+replace unemployrate = 8.3 if flintdate == 190
+*December 
+replace unemployrate = 8.2 if flintdate == 191
+
+*1976
+*January
+replace unemployrate = 7.9 if flintdate == 192
+*February 
+replace unemployrate = 7.7 if flintdate == 193
+*March 
+replace unemployrate = 7.6 if flintdate == 194
+*April 
+replace unemployrate = 7.7 if flintdate == 195
+*May 
+replace unemployrate = 7.4 if flintdate == 196
+*June 
+replace unemployrate = 7.6 if flintdate == 197
+*July 
+replace unemployrate = 7.8 if flintdate == 198
+*August 
+replace unemployrate = 7.8 if flintdate == 199
+*September 
+replace unemployrate = 7.6 if flintdate == 200
+*October 
+replace unemployrate = 7.7 if flintdate == 201
+*November 
+replace unemployrate = 7.8 if flintdate == 202
+*December 
+replace unemployrate = 7.8 if flintdate == 203
+
 

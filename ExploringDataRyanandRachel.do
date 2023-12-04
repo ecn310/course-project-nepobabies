@@ -30,9 +30,10 @@ graph box educ, over (fndjob2)
 
 save "GSSclean_noRDs.dta" , replace
 
-**paind10 maind10 indus10 
+** This prevents false positives from occurring for the nepobaby, panepobaby, and manepobaby variables.
+replace indus10 = 1 if missing(indus10)
+
 **Creating dummy variable for nepobaby = 1 if respondent is in the same industry as their mother or father, 0 otherwise
-*** Use replace function to replace the value in indus10 with something other than "iap" if the value is missing
 gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
 ** Create variable for being in the same industry as ONLY a respondent's father. (same false positives as nepobaby)
 gen panepobaby = (indus10 == paind10)

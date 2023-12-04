@@ -34,6 +34,11 @@ save "GSSclean_noRDs.dta" , replace
 **Creating dummy variable for nepobaby = 1 if respondent is in the same industry as their mother or father, 0 otherwise
 *** Use replace function to replace the value in indus10 with something other than "iap" if the value is missing
 gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
+** Create variable for being in the same industry as ONLY a respondent's father. (same false positives as nepobaby)
+gen panepobaby = (indus10 == paind10)
+** Create variable for being in the same industry as ONLY a respondent's mother. (same false positives as nepobaby)
+gen manepobaby = (indus10 == maind10)
+
 
 keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
 jobkeep jobhonor jobinter fndjob2 thisjob7 wrkwell paind16 paind10 paind80 ///

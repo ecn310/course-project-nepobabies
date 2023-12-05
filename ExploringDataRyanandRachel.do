@@ -1034,12 +1034,36 @@ gen agehire = age - yearsjob
 * Keeping observations only of target group; young adults
 drop if age > 29 | agehire > 29
 
-* Creating dummy variable for high unemployment rate/competitive labor market
-gen highu = unemployrate >= 5.8
-
-* Is this the right ttest? Not sure but tried it an I think it says there is a strong relationship between being a nepobaby and being hired in a competitive market
-ttest nepobaby == highu
-* We will have to check this.
-
 * Produce a bar graph for this t-test
 graph bar (mean) nepobaby (mean) highu, over(ymhiredate)
+
+* Dummy variable for nepobabies being hired during high unemployment
+gen nepo_high25 = (nepobaby == 1 & unemployrate >= 5.8)
+
+* Dummy variable for nepobabies being hired during high unemployment
+gen nepo_low75 = (nepobaby == 1 & unemployrate < 5.8)
+
+* Testing the hypothesis: it fails
+ttest nepo_high25 == nepo_low75
+
+* Checking different unemployment levels
+
+* High unemployment considered above 4.9. or above the median.
+gen nepo_high50 = (nepobaby == 1 & unemployrate > 4.9)
+
+* Low unemployment considered at or below 4.9. or the median.
+gen nepo_low50 = (nepobaby == 1 & unemployrate <= 4.9)
+
+* Testing the difference of means between the two 
+ttest nepo_high50 == nepo_low50
+
+* Visual of the difference in means
+ graph bar (mean) nepo_high50 (mean) nepo_low50
+ 
+ * Sensitivity analysis: minus 3 months
+ * Creating a variable that brings the ymhiredate back 3 months
+ gen hiredate_minus_3m = ymhiredate - 3
+ 
+ * Creating a variable that gives us the unemployment rate from three months ago.
+gen urate_minus3m = .
+replace urate_minus3m = unemployrate  ymhiredate == hiredate_minus_3

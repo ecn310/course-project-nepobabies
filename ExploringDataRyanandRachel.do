@@ -1058,8 +1058,8 @@ gen nepo_low50 = (nepobaby == 1 & unemployrate <= 4.9)
 ttest nepo_high50 == nepo_low50
 
 * Visual of the difference in means
- graph bar (mean) nepo_high50 (mean) nepo_low50
- 
+graph bar (mean) nepo_high50 (mean) nepo_low50, title(`"Nepobabies in High vs. Low Unemployment"')
+
  * Sensitivity analysis: minus 3 months
  * Creating a variable that brings the ymhiredate back 3 months
  gen hiredate_minus_3m = ymhiredate - 3

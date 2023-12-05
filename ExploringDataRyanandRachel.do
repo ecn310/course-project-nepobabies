@@ -1037,3 +1037,6 @@ gen highu = unemployrate >= 5.8
 * Is this the right ttest? Not sure but tried it an I think it says there is a strong relationship between being a nepobaby and being hired in a competitive market
 ttest nepobaby == highu
 * We will have to check this.
+
+* Produce a bar graph for this t-test
+graph bar (mean) nepobaby (mean) highu, over(ymhiredate)

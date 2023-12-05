@@ -1,6 +1,6 @@
-cd "C:\Users\rpseely\Syracuse University\Rachel Hannah Rabinowitz - ECN 310 Project"
+cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies"
 
-use "gss7222_r1" 
+use "GSSclean_noRDs" 
  
 
 keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
@@ -51,11 +51,6 @@ class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
 skiltest wojobyrs occmobil lastslf gender1 gender2 gender3 gender4 gender5 ///
 gender6 gender7 gender8 gender9 gender10 gender11 gender12 gender13 gender14 ///
 gdjobsec thisjob2
- 
-**paind10 maind10 indus10 
-**Creating dummy variable for nepobaby = 1 if respondent is in the same industry as their mother or father, 0 otherwise
-*** Use replace function to replace the value in indus10 with something other than "iap" if the value is missing
-gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
 
 **Getting rid of missing data
 drop if year < 1975
@@ -560,8 +555,6 @@ replace unemployrate = 5.4 if ymhiredate == 538
 *December
 replace unemployrate = 5.4 if ymhiredate == 539
 
-2005-2022 Ryan Patrick Seely
-
 *2005
 *January
 replace unemployrate = 5.3 if ymhiredate == 540
@@ -1028,3 +1021,19 @@ replace unemployrate = 3.7 if ymhiredate == 753
 replace unemployrate = 3.6 if ymhiredate == 754
 *December 
 replace unemployrate = 3.5 if ymhiredate == 755
+
+*Dropping observations for age not recorded - cannot accurately measure agehire without age.
+drop if missing(age)
+
+*Creating variable for age when getting job, i.e. age at ymhiredate
+gen agehire = age - yearsjob
+
+* Keeping observations only of target group; young adults
+drop if age > 29 | agehire > 29
+
+* Creating dummy variable for high unemployment rate/competitive labor market
+gen highu = unemployrate >= 5.8
+
+* Is this the right ttest? Not sure but tried it an I think it says there is a strong relationship between being a nepobaby and being hired in a competitive market
+ttest nepobaby == highu
+* We will have to check this.

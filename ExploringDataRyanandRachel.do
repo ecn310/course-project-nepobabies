@@ -2,7 +2,7 @@ cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\c
 
 use "GSSclean_noRDs" 
  
-
+***Keeping only the variables we want to examine
 keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
 jobkeep jobhonor jobinter fndjob2 thisjob7 wrkwell paind16 paind10 paind80 ///
 maind80 maind10 indus10 major1 major2 voedcol voedncol colmajr1 colmajr2 ///
@@ -40,6 +40,10 @@ gen manepobaby = (indus10 == maind10)
 **Getting rid of missing data
 drop if year < 1975
 drop if missing(dateintv)
+** We can only perform analysis for the respondents who answered the `yearsjob` question.
+drop if missing(yearsjob)
+*Dropping observations for age not recorded - cannot accurately measure agehire without age.
+drop if missing(age)
 
 * Convert dateintv to a string for easier manipulation
 gen dateintv_str = string(dateintv)
@@ -65,18 +69,12 @@ gen ymintdate = ym(yearintv, monthintv)
 ** Creates a variable for the month and year a respondent was hired (assuming they were hired exactly the number of years ago they reported) which leaves us with 9,256 variables/.
 gen ymhiredate = ymintdate - (yearsjob * 12)
 
-** We can only perform analysis for the respondents who answered the `yearsjob` question.
-drop if missing(yearsjob)
-
 *** Manual input of unemployment rates by month
 *** We must actually create the unemployment rates variable. It worked for me when I created the variable in the data editor but I did not save that. We must figure out how to do that. I imagine it will look something like...
 gen unemployrate = .
 
 ** Run the do-file that inputs unemployment rates by month.
 do urate_input.do
-
-*Dropping observations for age not recorded - cannot accurately measure agehire without age.
-drop if missing(age)
 
 *Creating variable for age when getting job, i.e. age at ymhiredate
 gen agehire = age - yearsjob

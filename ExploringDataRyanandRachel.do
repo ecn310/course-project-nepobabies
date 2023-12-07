@@ -80,27 +80,15 @@ do urate_input.do
 gen agehire = age - yearsjob
 
 * Keeping observations only of target group; young adults
-drop if age > 29 | agehire > 29
-
-* Produce a bar graph for this t-test
-graph bar (mean) nepobaby (mean) highu, over(ymhiredate)
-
-* Dummy variable for nepobabies being hired during high unemployment
-gen nepo_high25 = (nepobaby == 1 & unemployrate >= 5.8)
-
-* Dummy variable for nepobabies being hired during high unemployment
-gen nepo_low75 = (nepobaby == 1 & unemployrate < 5.8)
-
-* Testing the hypothesis: it fails
-ttest nepo_high25 == nepo_low75
+drop if agehire > 29
 
 * Checking different unemployment levels
 
-* High unemployment considered above 4.9. or above the median.
-gen nepo_high50 = (nepobaby == 1 & unemployrate > 4.9)
+* High unemployment considered above 5.9% or above the median.
+gen nepo_high50 = (nepobaby == 1 & unemployrate > 5.9)
 
-* Low unemployment considered at or below 4.9. or the median.
-gen nepo_low50 = (nepobaby == 1 & unemployrate <= 4.9)
+* Low unemployment considered at or below 5.9. or the median.
+gen nepo_low50 = (nepobaby == 1 & unemployrate <= 5.9)
 
 * Testing the difference of means between the two 
 ttest nepo_high50 == nepo_low50

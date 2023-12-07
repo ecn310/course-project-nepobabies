@@ -13,9 +13,6 @@ class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
 skiltest wojobyrs occmobil lastslf gender1 gender2 gender3 gender4 gender5 ///
 gender6 gender7 gender8 gender9 gender10 gender11 gender12 gender13 gender14 ///
 gdjobsec thisjob2
-
-
-
  
  **the next few lines are for getting an idea of those variables look like 
 tab dateintv
@@ -39,18 +36,6 @@ gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
 gen panepobaby = (indus10 == paind10)
 ** Create variable for being in the same industry as ONLY a respondent's mother. (same false positives as nepobaby)
 gen manepobaby = (indus10 == maind10)
-
-
-keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
-jobkeep jobhonor jobinter fndjob2 thisjob7 wrkwell paind16 paind10 paind80 ///
-maind80 maind10 indus10 major1 major2 voedcol voedncol colmajr1 colmajr2 ///
-joblose yearsjob covemply race parborn granborn wealth opwlth income72 ///
-income77 income82 income86 income91 income98 income06 income16 coninc realinc ///
-povline incdef wlthpov progtax oprich inequal3 taxrich taxshare contrich ///
-class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
-skiltest wojobyrs occmobil lastslf gender1 gender2 gender3 gender4 gender5 ///
-gender6 gender7 gender8 gender9 gender10 gender11 gender12 gender13 gender14 ///
-gdjobsec thisjob2
 
 **Getting rid of missing data
 drop if year < 1975
@@ -83,14 +68,12 @@ gen ymhiredate = ymintdate - (yearsjob * 12)
 ** We can only perform analysis for the respondents who answered the `yearsjob` question.
 drop if missing(yearsjob)
 
-** Run the do-file that inputs unemployment rates by month.
-do 
-
 *** Manual input of unemployment rates by month
 *** We must actually create the unemployment rates variable. It worked for me when I created the variable in the data editor but I did not save that. We must figure out how to do that. I imagine it will look something like...
 gen unemployrate = .
 
-run urate_input.do
+** Run the do-file that inputs unemployment rates by month.
+do urate_input.do
 
 *Dropping observations for age not recorded - cannot accurately measure agehire without age.
 drop if missing(age)

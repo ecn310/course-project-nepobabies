@@ -2,6 +2,9 @@
 ** We assign unemployment rate values by month, using the variable ymhiredate to represent the month a respondent was hired.
 ** Unemployment rates are inputted for every month from January 1987 to December 2022, the range of our data.
 
+*** We must create the unemployment rates variable before assigning variables to it.
+gen unemployrate = .
+
 *1987
 *January
 replace unemployrate = 6.6 if ymhiredate == 324

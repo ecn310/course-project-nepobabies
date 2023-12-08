@@ -56,9 +56,6 @@ gen monthintv = .
 replace monthintv = real(substr(dateintv_str, 1, 1)) if length(dateintv_str) == 3
 replace monthintv = real(substr(dateintv_str, 1, 2)) if length(dateintv_str) == 4
 
-* Display the results
-browse dateintv dateintv_str dayintv monthintv year
-
 * Rename year variable for clarity
 rename year yearintv
 
@@ -74,7 +71,8 @@ gen ymhiredate = ymintdate - (yearsjob * 12)
 gen unemployrate = .
 
 ** Run the do-file that inputs unemployment rates by month.
-do urate_input.do
+** This must be corrected to the line: do urate_input.do. For some reason it only works when I have it like this.
+do "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\urate_input.do"
 
 *Creating variable for age when getting job, i.e. age at ymhiredate
 gen agehire = age - yearsjob
@@ -82,19 +80,68 @@ gen agehire = age - yearsjob
 * Keeping observations only of target group; young adults
 drop if agehire > 29
 
-* Checking different unemployment levels
 
-* High unemployment considered above 5.9% or above the median.
-gen nepo_high50 = (nepobaby == 1 & unemployrate > 5.9)
-
-* Low unemployment considered at or below 5.9. or the median.
-gen nepo_low50 = (nepobaby == 1 & unemployrate <= 5.9)
+* We create two groups of nepobabies to test the difference in means for differently competitive labor markets.
+* The unemployment rates we chose to be considered high and low are first and third quartiles of the unemployment rates over the period of time we look at from 1987-2018
+* We choose to cut out the middle 50% of the observations because we found that it was very noisy. We would change the unemployment rate we found to significant by 0.5 percentage points and get an entirely different result on the t-test.
+* Creating variable for nepobabies hired during high unemployment (third quartile)
+gen nepo_highu = (nepobaby == 1 & unemployrate > 6.625)
+* Creating variable for nepobabies hired during low unemployment (first quartile)
+gen nepo_lowu = (nepobaby == 1 & unemployrate <= 4.8)
 
 * Testing the difference of means between the two 
-ttest nepo_high50 == nepo_low50
+ttest nepo_highu == nepo_lowu
 
 * Visual of the difference in means
-graph bar (mean) nepo_high50 (mean) nepo_low50, title(`"Nepobabies in High vs. Low Unemployment"')
+graph bar (mean) nepo_highu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low Unemployment"')
+
+
+* Testing to see how nepobaby rates change with gender of parent and child
+
+** Nepobaby by FATHER
+
+*Creating variable for male nepobabies with the same industry as their father.
+gen malenepopa = (panepobaby == 1 & sex == 1)
+
+*Creating variable for female nepobabies with the same industry as their father.
+gen femalenepopa = (panepobaby == 1 & sex ==2)
+
+*Marking irrelevant datapoints as missing
+replace malenepopa = . if panepobaby == 0
+replace femalenepopa = . if panepobaby == 0
+
+*Removing instances of respondents having the same industry as both their mother and father.
+replace malenepopa = . if (maind10 == paind10)
+replace femalenepopa = . if (maind10 == paind10)
+
+*Testing the significance in the differences between the proportion of male and female nepobabies with the same industry as their father.
+ttest femalenepopa == malenepopa
+
+* Creating bar graph to visualize the t-test
+graph bar (mean) malenepopa (mean) femalenepopa, title(`"Male vs. Female Nepobabies - Father"')
+
+
+** Nepobaby by MOTHER
+
+*Creating variable for male nepobabies with the same industry as their mother.
+gen malenepoma = (manepobaby == 1 & sex == 1)
+*Creating variable for female nepobabies with the same industry as their father.
+gen femalenepoma = (manepobaby == 1 & sex ==2)
+
+*Marking irrelevant datapoints as missing
+replace malenepoma = . if manepobaby == 0
+replace femalenepoma = . if manepobaby == 0
+
+*Removing instances of respondents having the same industry as both their mother and father.
+replace malenepoma = . if (maind10 == paind10)
+replace femalenepoma = . if (maind10 == paind10)
+
+*Testing the significance in the differences between the proportion of male and female nepobabies with the same industry as their mother.
+ttest femalenepoma == malenepoma
+
+* Creating bar graph to visualize the t-test
+graph bar (mean) malenepoma (mean) femalenepoma, title(`"Male vs. Female Nepobabies - Mother"')
+
 
  * Sensitivity analysis: minus 3 months
  * Creating a variable that brings the ymhiredate back 3 months
@@ -103,3 +150,88 @@ graph bar (mean) nepo_high50 (mean) nepo_low50, title(`"Nepobabies in High vs. L
  * Creating a variable that gives us the unemployment rate from three months ago.
 gen urate_minus3m = .
 replace urate_minus3m = unemployrate  ymhiredate == hiredate_minus_3
+
+* Looking at the demographics of nepobabies in high unemployment
+
+* RACE
+* Creating variable for white nepobabies (white is equal to 1)
+gen nepo_white = (nepobaby == 1 & race == 1)
+
+* Labeling irrelevant data as missing to avoid noise/confusion
+replace nepo_white = . if nepobaby == 0
+
+* Creating a variable for the proportion of white people surveyed
+gen sample_white = (race == 1)
+
+* Comparing the means of white people in the whole sample vs. white nepobabies
+ttest sample_white == nepo_white, unpaired
+
+* GENDER
+* Creating variable for male nepobabies
+gen nepo_male = (nepobaby == 1 & sex == 1)
+
+* Labeling irrelevant data as missing to avoid noise/confusion
+replace nepo_male = . if nepobaby == 0
+
+* Creating a variable for the proportion of males surveyed
+gen sample_male = (sex == 1)
+
+* Comparing the means of males in the whole sample vs. male nepobabies
+ttest sample_male == nepo_male, unpaired
+
+* CLASS (self-reported)
+* Creating variable for male nepobabies
+gen nepo_midup = (nepobaby == 1 & class >= 3)
+
+* Labeling irrelevant data as missing to avoid noise/confusion
+replace nepo_midup = . if nepobaby == 0
+
+* Creating a variable for the proportion of males surveyed
+gen sample_midup = (class >= 3)
+
+* Comparing the means of males in the whole sample vs. male nepobabies
+ttest sample_midup == nepo_midup, unpaired
+
+* EDUCATION
+* Creating variable for male nepobabies
+gen nepo_educ = (nepobaby == 1 & educ >= 16)
+
+* Labeling irrelevant data as missing to avoid noise/confusion
+replace nepo_educ = . if nepobaby == 0
+
+* Creating a variable for the proportion of males surveyed
+gen sample_educ = (educ >= 16)
+
+* Comparing the means of males in the whole sample vs. male nepobabies
+ttest sample_educ == nepo_educ, unpaired
+
+* HOURS WORKED WEEKLY (self-reported)
+* Creating variable for male nepobabies
+gen nepo_hrs = (nepobaby == 1 & hrs1 >= 40)
+
+* Labeling irrelevant data as missing to avoid noise/confusion
+replace nepo_hrs = . if nepobaby == 0
+
+* Creating a variable for the proportion of males surveyed
+gen sample_hrs = (hrs1 >= 40)
+
+* Comparing the means of males in the whole sample vs. male nepobabies
+ttest sample_hrs == nepo_hrs, unpaired
+
+* INCOME
+* Income variable: `realinc` is family income in base year 1986
+* Creating variable for high income nepobabies (make greater than or equal to the 90th percentile of income: 66220)
+gen nepo_hinc = (nepobaby == 1 & realinc >= 66220)
+
+* Labeling irrelevant data as missing to avoid noise/confusion
+replace nepo_hinc = . if nepobaby == 0
+
+* Creating a variable for the proportion of males surveyed
+gen sample_hinc = (realinc >= 66220)
+
+* Comparing the means of males in the whole sample vs. male nepobabies
+ttest sample_hinc == nepo_hinc, unpaired
+
+
+
+

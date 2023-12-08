@@ -66,10 +66,6 @@ gen ymintdate = ym(yearintv, monthintv)
 ** Creates a variable for the month and year a respondent was hired (assuming they were hired exactly the number of years ago they reported) which leaves us with 9,256 variables/.
 gen ymhiredate = ymintdate - (yearsjob * 12)
 
-*** Manual input of unemployment rates by month
-*** We must actually create the unemployment rates variable
-gen unemployrate = .
-
 ** Run the do-file that inputs unemployment rates by month.
 ** This must be corrected to the line: do urate_input.do. For some reason it only works when I have it like this.
 do "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\urate_input.do"
@@ -88,6 +84,10 @@ drop if agehire > 29
 gen nepo_highu = (nepobaby == 1 & unemployrate > 6.625)
 * Creating variable for nepobabies hired during low unemployment (first quartile)
 gen nepo_lowu = (nepobaby == 1 & unemployrate <= 4.8)
+
+* Making the t-test only for nepobabies, not the whole sample, so that the means are more representative of the nepobaby population
+replace nepo_highu = . if nepobaby == 0
+replace nepo_lowu = . if nepobaby == 0
 
 * Testing the difference of means between the two 
 ttest nepo_highu == nepo_lowu
@@ -166,6 +166,8 @@ gen sample_white = (race == 1)
 * Comparing the means of white people in the whole sample vs. white nepobabies
 ttest sample_white == nepo_white, unpaired
 
+graph bar (mean) sample_white (mean) nepo_white, title(`"Race for Nepobabies vs Sample"')
+
 * GENDER
 * Creating variable for male nepobabies
 gen nepo_male = (nepobaby == 1 & sex == 1)
@@ -173,53 +175,56 @@ gen nepo_male = (nepobaby == 1 & sex == 1)
 * Labeling irrelevant data as missing to avoid noise/confusion
 replace nepo_male = . if nepobaby == 0
 
-* Creating a variable for the proportion of males surveyed
+* Creating a variable for the sample of males surveyed
 gen sample_male = (sex == 1)
 
 * Comparing the means of males in the whole sample vs. male nepobabies
 ttest sample_male == nepo_male, unpaired
 
+graph bar (mean) sample_male (mean) nepo_male
+
 * CLASS (self-reported)
-* Creating variable for male nepobabies
+* Creating variable for middle and upper class nepobabies
 gen nepo_midup = (nepobaby == 1 & class >= 3)
 
 * Labeling irrelevant data as missing to avoid noise/confusion
 replace nepo_midup = . if nepobaby == 0
 
-* Creating a variable for the proportion of males surveyed
+* Creating a variable for the sample of middle and upper class people surveyed
 gen sample_midup = (class >= 3)
 
-* Comparing the means of males in the whole sample vs. male nepobabies
+* Comparing the means of middle/upper class people in the whole sample vs. middle/upper class nepobabies
 ttest sample_midup == nepo_midup, unpaired
 
 * EDUCATION
-* Creating variable for male nepobabies
+* Creating variable for college educated nepobabies
 gen nepo_educ = (nepobaby == 1 & educ >= 16)
 
 * Labeling irrelevant data as missing to avoid noise/confusion
 replace nepo_educ = . if nepobaby == 0
 
-* Creating a variable for the proportion of males surveyed
+* Creating a variable for the sample of college educated people surveyed
 gen sample_educ = (educ >= 16)
 
-* Comparing the means of males in the whole sample vs. male nepobabies
+* Comparing the means of college educating people in the whole sample vs. college educated nepobabies
 ttest sample_educ == nepo_educ, unpaired
 
 * HOURS WORKED WEEKLY (self-reported)
-* Creating variable for male nepobabies
-gen nepo_hrs = (nepobaby == 1 & hrs1 >= 40)
+* Creating variable for nepobabies who work overtime
+gen nepo_hrs = (nepobaby == 1 & hrs1 >= 45)
 
 * Labeling irrelevant data as missing to avoid noise/confusion
 replace nepo_hrs = . if nepobaby == 0
 
-* Creating a variable for the proportion of males surveyed
-gen sample_hrs = (hrs1 >= 40)
+* Creating a variable for the sample of people surveyed who work overtime
+gen sample_hrs = (hrs1 >= 45)
 
-* Comparing the means of males in the whole sample vs. male nepobabies
+* Comparing the means of overtime workers in the whole sample vs. overtime working nepobabies
 ttest sample_hrs == nepo_hrs, unpaired
 
 * INCOME
 * Income variable: `realinc` is family income in base year 1986
+
 * Creating variable for high income nepobabies (make greater than or equal to the 90th percentile of income: 66220)
 gen nepo_hinc = (nepobaby == 1 & realinc >= 66220)
 
@@ -233,5 +238,33 @@ gen sample_hinc = (realinc >= 66220)
 ttest sample_hinc == nepo_hinc, unpaired
 
 
+* Creating variable for low income nepobabies (make greater than or equal to the 90th percentile of income: 66220)
+gen nepo_linc = (nepobaby == 1 & realinc <= 14860.38)
 
+* Labeling irrelevant data as missing to avoid noise/confusion
+replace nepo_linc = . if nepobaby == 0
 
+* Creating a variable for the proportion of males surveyed
+gen sample_linc = (realinc <= 14860.38)
+
+* Comparing the means of males in the whole sample vs. male nepobabies
+ttest sample_linc == nepo_linc, unpaired
+
+* JOB SAFETY
+
+* Creating variable for high income nepobabies (make greater than or equal to the 90th percentile of income: 66220)
+gen nepo_safe = (nepobaby == 1 & joblose == 4)
+
+* Labeling irrelevant data as missing to avoid noise/confusion
+replace nepo_safe = . if nepobaby == 0
+replace nepo_safe = . if missing(joblose)
+
+* Creating a variable for the proportion of males surveyed
+gen sample_safe = (joblose == 4)
+replace sample_safe = . if missing(joblose)
+
+* Comparing the means of males in the whole sample vs. male nepobabies
+ttest sample_safe == nepo_safe, unpaired
+
+* Creating bar graph for this t-test
+graph bar (mean) sample_safe (mean) nepo_safe, title(`"Job Safety for Nepobabies and Sample"')

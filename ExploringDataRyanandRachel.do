@@ -13,17 +13,6 @@ class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
 skiltest wojobyrs occmobil lastslf gender1 gender2 gender3 gender4 gender5 ///
 gender6 gender7 gender8 gender9 gender10 gender11 gender12 gender13 gender14 ///
 gdjobsec thisjob2
- 
- **the next few lines are for getting an idea of those variables look like 
-tab dateintv
-tab educ
-tab fndjob2
-
-**this gives us important information on the number of observation and descriptive statistics of important variables
-summarize fndjob2 educ dateintv major1 paeduc maeduc industry indus80 indus07 indus10 paind10 paind80 paind16 maind10 maind80 indfirst
-
-**this examines the relationship between education and finding a job through a relative
-graph box educ, over (fndjob2)
 
 save "GSSclean_noRDs.dta" , replace
 

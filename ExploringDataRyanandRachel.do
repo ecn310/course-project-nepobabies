@@ -45,7 +45,7 @@ gen monthintv = .
 replace monthintv = real(substr(dateintv_str, 1, 1)) if length(dateintv_str) == 3
 replace monthintv = real(substr(dateintv_str, 1, 2)) if length(dateintv_str) == 4
 
-* Rename year variable for clarity
+* Renaming year variable for clarity. It should be made clear that the year variable attached to observations denotes the year they were interviewed, not the year they were hired.
 rename year yearintv
 
 ** This created a variable for the year and month a respondent was interviewed!

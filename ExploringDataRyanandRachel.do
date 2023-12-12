@@ -84,6 +84,44 @@ ttest nepo_highu == nepo_lowu
 * Visual of the difference in means
 graph bar (mean) nepo_highu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low Unemployment"')
 
+*Put this line of code at the beginning
+ssc install ciplot
+ 
+* Creates a plot with the confidence intervals of nepo_highu and nepo_lowu. Should edit this to include bars.
+ciplot nepo_highu nepo_lowu
+
+* Examining the ratio of nepobabies and all people hired during times of low and high unemployment
+gen allhire_highu = (unemployrate >= 6.625)
+
+replace allhire_highu = . if nepobaby == 1
+
+gen allhire_lowu = (unemployrate <= 4.8)
+
+replace allhire_lowu = . if nepobaby == 1
+
+* Calculate the number of observations where nepo_highu = 1
+egen nepo_highu_1 = total(nepo_highu == 1)
+
+* Calculate the number of observations where allhire_highu = 1
+egen allhire_highu_1 = total(allhire_highu == 1)
+
+* Calculate the ratio
+gen ratio_high = nepo_highu_1 / allhire_highu_1
+
+* To view the ratio of nepobabies hired in high unemployment to non-nepobabies hired in high unemployment
+tab ratio_high
+
+* Calculate the number of observations where nepo_lowu = 1
+egen nepo_lowu_1 = total(nepo_lowu == 1)
+
+* Calculate the number of observations where allhire_lowu = 1
+egen allhire_lowu_1 = total(allhire_lowu == 1)
+
+* Calculate the ratio
+gen ratio_low = nepo_lowu_1 / allhire_lowu_1
+
+* To view the ratio of nepobabies hired in low unemployment to non-nepobabies hired in low unemployment
+tab ratio_low
 
 * Testing to see how nepobaby rates change with gender of parent and child
 

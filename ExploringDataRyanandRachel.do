@@ -57,7 +57,9 @@ gen ymhiredate = ymintdate - (yearsjob * 12)
 
 ** Run the do-file that inputs unemployment rates by month.
 ** This must be corrected to the line: do urate_input.do. For some reason it only works when I have it like this.
-do "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\urate_input.do"
+do "urate_input"
+
+"C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\urate_input.do"
 
 *Creating variable for age when getting job, i.e. age at ymhiredate
 gen agehire = age - yearsjob
@@ -89,6 +91,58 @@ ssc install ciplot
  
 * Creates a plot with the confidence intervals of nepo_highu and nepo_lowu. Should edit this to include bars.
 ciplot nepo_highu nepo_lowu
+
+** The blocked out section below includes my numerous attempts to create a bar graph including confidence interval lines
+/*
+
+*Creating confidence interval variables for the ciplot
+ci proportion (nepo_highu)
+gen lci_nhu = r(lb)
+gen uci_nhu = r(ub)
+
+ci proportion (nepo_lowu)
+gen lci_nlu = r(lb)
+gen uci_nlu = r(ub)
+
+list nepo_highu lci_nhu uci_nhu nepo_lowu lci_nlu uci_nhu in 1/10
+
+twoway (bar mean(nepo_highu) nepo_highu) (rcap lci_nhu uci_nhu nepo_highu, color(blue)), ///
+       (bar mean(nepo_lowu) nepo_lowu) (rcap lci_nlu uci_nlu nepo_lowu, color(red)), ///
+       legend(order(1 "Variable 1" 2 "Variable 2"))
+	 
+	 
+twoway (bar mean(nepo_highu) nepo_highu, barwidth(0.4)) ///
+       (rcap lci_nhu uci_nhu nepo_highu, color(blue)), ///
+       (bar mean(nepo_lowu) nepo_lowu, barwidth(0.4)) ///
+       (rcap lci_nlu uci_nlu nepo_lowu, color(red)), ///
+       legend(order(1 "Variable 1" 2 "Variable 2"))
+	   
+egen mean_nhu = mean(nepo_highu)
+egen mean_nlu = mean(nepo_lowu)
+
+ci mean nepo_highu
+ci mean nepo_lowu
+
+graph bar (mean) nepo_highu nepo_lowu, /// 
+	bar(1, asyvars) ///
+    ytitle("Proportion of Observations Equal to 1") ///
+    title("Proportions with Confidence Intervals")
+	
+graph twoway (bar nepo_highu nepo_lowu) (rcap nepo_highu lci_nhu uci_nhu) (rcap nepo_lowu lci_nlu uci_nlu), ///
+    legend(label(1 "Variable 1") label(2 "Variable 2")) ///
+    ytitle("Proportion of Observations Equal to 1") ///
+    title("Proportions with Confidence Intervals")
+
+	  
+	  
+	  
+* attempt to create ciplot w conf. int.
+graph bar (mean) nepo_highu nepo_lowu, bargap(20) ///
+    rcap(mean - r(se), mean + r(se)) ///
+    legend(order(1 "Variable 1" 2 "Variable 2"))
+	
+*/
+
 
 * Examining the ratio of nepobabies and all people hired during times of low and high unemployment
 gen allhire_highu = (unemployrate >= 6.625)

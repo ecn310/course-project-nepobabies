@@ -72,9 +72,11 @@ drop if agehire > 29
 * The unemployment rates we chose to be considered high and low are first and third quartiles of the unemployment rates over the period of time we look at from 1987-2018
 * We choose to cut out the middle 50% of the observations because we found that it was very noisy. We would change the unemployment rate we found to significant by 0.5 percentage points and get an entirely different result on the t-test.
 * Creating variable for nepobabies hired during high unemployment (third quartile)
-gen nepo_highu = (nepobaby == 1 & unemployrate > 6.625)
+gen nepo_highu = (nepobaby == 1 & unemployrate >= 6.625)
 * Creating variable for nepobabies hired during low unemployment (first quartile)
 gen nepo_lowu = (nepobaby == 1 & unemployrate <= 4.8)
+*Creating a variable for nepobabies hired between the first and third quartile of all monthly unemployment rates.
+gen nepo_midu = (nepobaby == 1) & (unemployrate > 4.8) & (unemployrate < 6.625)
 
 * Making the t-test only for nepobabies, not the whole sample, so that the means are more representative of the nepobaby population
 replace nepo_highu = . if nepobaby == 0
@@ -153,6 +155,10 @@ gen allhire_lowu = (unemployrate <= 4.8)
 
 replace allhire_lowu = . if nepobaby == 1
 
+gen allhire_midu = (unemployrate > 4.8) & (unemployrate < 6.625)
+
+replace allhire_midu = . if nepobaby == 1
+
 * Calculate the number of observations where nepo_highu = 1
 egen nepo_highu_1 = total(nepo_highu == 1)
 
@@ -164,6 +170,8 @@ gen ratio_high = nepo_highu_1 / allhire_highu_1
 
 * To view the ratio of nepobabies hired in high unemployment to non-nepobabies hired in high unemployment
 tab ratio_high
+* The ratio = 0.0987
+
 
 * Calculate the number of observations where nepo_lowu = 1
 egen nepo_lowu_1 = total(nepo_lowu == 1)
@@ -176,6 +184,31 @@ gen ratio_low = nepo_lowu_1 / allhire_lowu_1
 
 * To view the ratio of nepobabies hired in low unemployment to non-nepobabies hired in low unemployment
 tab ratio_low
+* The ratio = 0.0607
+
+
+* Calculate the number of observations where nepo_midu = 1
+egen nepo_midu_1 = total(nepo_midu == 1)
+
+* Calculate the number of observations where allhire_midu = 1
+egen allhire_midu_1 = total(allhire_midu == 1)
+
+* Calculate the ratio
+gen ratio_mid = nepo_midu_1 / allhire_midu_1
+
+* To view the ratio of nepobabies hired in "middle" unemployment to non-nepobabies hired in "middle" unemployment
+tab ratio_mid
+* The ratio = 0.0914
+
+
+
+
+
+
+
+
+
+
 
 * Testing to see how nepobaby rates change with gender of parent and child
 

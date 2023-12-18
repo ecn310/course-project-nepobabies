@@ -81,12 +81,55 @@ gen nepo_midu = (nepobaby == 1) & (unemployrate > 4.8) & (unemployrate < 6.625)
 * Making the t-test only for nepobabies, not the whole sample, so that the means are more representative of the nepobaby population
 replace nepo_highu = . if nepobaby == 0
 replace nepo_lowu = . if nepobaby == 0
+replace nepo_midu = . if nepobaby == 0
 
 * Testing the difference of means between the two 
 ttest nepo_highu == nepo_lowu
 
+ttest nepo_highu == nepo_midu
+
+ttest nepo_midu == nepo_lowu
+
+
+* Testing at different unemployment rate cutoff: top quartile vs. bottom three quartiles of unemployment rates
+
+gen nepo_high25u = (nepobaby == 1 & unemployrate >= 6.625)
+
+gen nepo_low75u = (nepobaby == 1 & unemployrate < 6.625)
+
+replace nepo_high25u = . if nepobaby == 0
+
+replace nepo_low75u = . if nepobaby == 0
+
+ttest nepo_high25u == nepo_low75u
+* This does not really make sense because of course there will be more nepobabies in 75% of the monthly unemployment rates. Not really testing what it is intended to because there is nothing that holds the two groups constant.
+
+
+** Chi square test of all groups of unemployment
+gen unemployrate_groups = .
+
+replace unemployrate_groups = 1 if unemployrate <= 4.8
+
+replace unemployrate_groups = 2 if (unemployrate > 4.8) & (unemployrate < 6.625)
+
+replace unemployrate_groups = 3 if unemployrate >= 6.625
+
+* Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
+tabulate nepobaby unemployrate_groups, chi2
+
+gen highu_ratio = nepo_highu / allhire_highu
+
+
+
+
+
+
+
+
+
 * Visual of the difference in means
 graph bar (mean) nepo_highu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low Unemployment"')
+
 
 *Put this line of code at the beginning
 ssc install ciplot
@@ -200,14 +243,20 @@ gen ratio_mid = nepo_midu_1 / allhire_midu_1
 tab ratio_mid
 * The ratio = 0.0914
 
+*To graphically view the relationships of all the ratios
+graph bar (mean) ratio_high (mean) ratio_mid (mean) ratio_low, blabel(bar) ytitle(Ratio of Nepobabies to Non-Nepobabies) title(Nepotism Hiring in Different Labor Markets) legend(order(1 "high unemployment hire" 2 "median unemployment hire" 3 "low unemployment hire"))
 
 
+** The following commands create the frequency table showing the amounts of observations of nepobabies and non-nepobabies hired during different unemployment rates.
+gen hire_urate = .
 
+replace hire_urate = 1 if (unemployrate <= 4.8)
 
+replace hire_urate = 2 if (unemployrate > 4.8) & (unemployrate < 6.625)
 
+replace hire_urate = 3 if (unemployrate >= 6.625)
 
-
-
+tab hire_urate nepobaby
 
 
 * Testing to see how nepobaby rates change with gender of parent and child

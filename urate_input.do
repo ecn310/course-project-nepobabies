@@ -811,7 +811,6 @@ replace unemployrate = 4.2 if ymhiredate == 694
 replace unemployrate = 4.1 if ymhiredate == 695
 
 *2018
-* Last year of hire analyzed
 *January
 replace unemployrate = 4.7 if ymhiredate == 696
 *February 
@@ -836,3 +835,107 @@ replace unemployrate = 4.2 if ymhiredate == 705
 replace unemployrate = 4.2 if ymhiredate == 706
 *December 
 replace unemployrate = 4.1 if ymhiredate == 707
+
+*2019
+*January
+replace unemployrate = 4.0 if ymhiredate == 708
+*February 
+replace unemployrate = 3.8 if ymhiredate == 709
+*March 
+replace unemployrate = 3.8 if ymhiredate == 710
+*April 
+replace unemployrate = 3.6 if ymhiredate == 711
+*May
+replace unemployrate = 3.7 if ymhiredate == 712
+*June 
+replace unemployrate = 3.6 if ymhiredate == 713
+*July 
+replace unemployrate = 3.7 if ymhiredate == 714
+*August 
+replace unemployrate = 3.7 if ymhiredate == 715
+*September
+replace unemployrate = 3.5 if ymhiredate == 716
+*October
+replace unemployrate = 3.6 if ymhiredate == 717
+*November 
+replace unemployrate = 3.6 if ymhiredate == 718
+*December 
+replace unemployrate = 3.6 if ymhiredate == 719
+
+*2020
+*January
+replace unemployrate = 3.5 if ymhiredate == 720
+*February 
+replace unemployrate = 3.5 if ymhiredate == 721
+*March 
+replace unemployrate = 4.4 if ymhiredate == 722
+*April 
+replace unemployrate = 14.7 if ymhiredate == 723
+*May
+replace unemployrate = 13.2 if ymhiredate == 724
+*June 
+replace unemployrate = 11.0 if ymhiredate == 725
+*July 
+replace unemployrate = 10.2 if ymhiredate == 726
+*August 
+replace unemployrate = 8.4 if ymhiredate == 727
+*September
+replace unemployrate = 7.9 if ymhiredate == 728
+*October
+replace unemployrate = 6.9 if ymhiredate == 729
+*November 
+replace unemployrate = 6.7 if ymhiredate == 730
+*December 
+replace unemployrate = 6.7 if ymhiredate == 731
+
+*2021
+*January
+replace unemployrate = 6.3 if ymhiredate == 732
+*February 
+replace unemployrate = 6.2 if ymhiredate == 733
+*March
+replace unemployrate = 6.1 if ymhiredate == 734
+*April 
+replace unemployrate = 6.1 if ymhiredate == 735
+*May
+replace unemployrate = 5.8 if ymhiredate == 736
+*June 
+replace unemployrate = 5.9 if ymhiredate == 737
+*July 
+replace unemployrate = 5.4 if ymhiredate == 738
+*August 
+replace unemployrate = 5.2 if ymhiredate == 739
+*September
+replace unemployrate = 4.8 if ymhiredate == 740
+*October
+replace unemployrate = 4.5 if ymhiredate == 741
+*November 
+replace unemployrate = 4.2 if ymhiredate == 742
+*December 
+replace unemployrate = 3.9 if ymhiredate == 743
+
+*2022 last survey year
+*January
+replace unemployrate = 4.0 if ymhiredate == 744
+*February 
+replace unemployrate = 3.8 if ymhiredate == 745
+*March
+replace unemployrate = 3.6 if ymhiredate == 746
+*April 
+replace unemployrate = 3.6 if ymhiredate == 747
+*May
+replace unemployrate = 3.6 if ymhiredate == 748
+*June 
+replace unemployrate = 3.6 if ymhiredate == 749
+*July 
+replace unemployrate = 3.5 if ymhiredate == 750
+*August 
+replace unemployrate = 3.7 if ymhiredate == 751
+*September
+replace unemployrate = 3.5 if ymhiredate == 752
+*October
+replace unemployrate = 3.7 if ymhiredate == 753
+*November 
+replace unemployrate = 3.6 if ymhiredate == 754
+*December 
+replace unemployrate = 3.5 if ymhiredate == 755

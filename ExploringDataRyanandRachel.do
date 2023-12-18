@@ -69,7 +69,7 @@ drop if agehire > 29
 
 
 * We create two groups of nepobabies to test the difference in means for differently competitive labor markets.
-* The unemployment rates we chose to be considered high and low are first and third quartiles of the unemployment rates over the period of time we look at from 1987-2018
+* The unemployment rates we chose to be considered high and low are first and third quartiles of the unemployment rates over the period of time we look at from 1987-2022
 * We choose to cut out the middle 50% of the observations because we found that it was very noisy. We would change the unemployment rate we found to significant by 0.5 percentage points and get an entirely different result on the t-test.
 * Creating variable for nepobabies hired during high unemployment (third quartile)
 gen nepo_highu = (nepobaby == 1 & unemployrate >= 6.625)

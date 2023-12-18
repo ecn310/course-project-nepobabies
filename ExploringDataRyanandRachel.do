@@ -86,8 +86,11 @@ replace nepo_midu = . if nepobaby == 0
 * Testing the difference of means between the two 
 ttest nepo_highu == nepo_lowu
 
-ttest nepo_highu == nepo_midu
+* Visual of the difference in means
+graph bar (mean) nepo_highu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low Unemployment"')
 
+** T-test does not really work because it does not measure what it intends to measure
+ttest nepo_highu == nepo_midu
 ttest nepo_midu == nepo_lowu
 
 
@@ -120,15 +123,6 @@ tabulate nepobaby unemployrate_groups, chi2
 gen highu_ratio = nepo_highu / allhire_highu
 
 
-
-
-
-
-
-
-
-* Visual of the difference in means
-graph bar (mean) nepo_highu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low Unemployment"')
 
 
 *Put this line of code at the beginning

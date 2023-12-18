@@ -92,6 +92,7 @@ graph bar (mean) nepo_highu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low
 ** T-test does not really work because it does not measure what it intends to measure
 ttest nepo_highu == nepo_midu
 ttest nepo_midu == nepo_lowu
+* This should be deleted
 
 
 * Testing at different unemployment rate cutoff: top quartile vs. bottom three quartiles of unemployment rates
@@ -106,6 +107,7 @@ replace nepo_low75u = . if nepobaby == 0
 
 ttest nepo_high25u == nepo_low75u
 * This does not really make sense because of course there will be more nepobabies in 75% of the monthly unemployment rates. Not really testing what it is intended to because there is nothing that holds the two groups constant.
+* This should be deleted, too, because it does not really tell us anything
 
 
 ** Chi square test of all groups of unemployment
@@ -130,57 +132,6 @@ ssc install ciplot
  
 * Creates a plot with the confidence intervals of nepo_highu and nepo_lowu. Should edit this to include bars.
 ciplot nepo_highu nepo_lowu
-
-** The blocked out section below includes my numerous attempts to create a bar graph including confidence interval lines
-/*
-
-*Creating confidence interval variables for the ciplot
-ci proportion (nepo_highu)
-gen lci_nhu = r(lb)
-gen uci_nhu = r(ub)
-
-ci proportion (nepo_lowu)
-gen lci_nlu = r(lb)
-gen uci_nlu = r(ub)
-
-list nepo_highu lci_nhu uci_nhu nepo_lowu lci_nlu uci_nhu in 1/10
-
-twoway (bar mean(nepo_highu) nepo_highu) (rcap lci_nhu uci_nhu nepo_highu, color(blue)), ///
-       (bar mean(nepo_lowu) nepo_lowu) (rcap lci_nlu uci_nlu nepo_lowu, color(red)), ///
-       legend(order(1 "Variable 1" 2 "Variable 2"))
-	 
-	 
-twoway (bar mean(nepo_highu) nepo_highu, barwidth(0.4)) ///
-       (rcap lci_nhu uci_nhu nepo_highu, color(blue)), ///
-       (bar mean(nepo_lowu) nepo_lowu, barwidth(0.4)) ///
-       (rcap lci_nlu uci_nlu nepo_lowu, color(red)), ///
-       legend(order(1 "Variable 1" 2 "Variable 2"))
-	   
-egen mean_nhu = mean(nepo_highu)
-egen mean_nlu = mean(nepo_lowu)
-
-ci mean nepo_highu
-ci mean nepo_lowu
-
-graph bar (mean) nepo_highu nepo_lowu, /// 
-	bar(1, asyvars) ///
-    ytitle("Proportion of Observations Equal to 1") ///
-    title("Proportions with Confidence Intervals")
-	
-graph twoway (bar nepo_highu nepo_lowu) (rcap nepo_highu lci_nhu uci_nhu) (rcap nepo_lowu lci_nlu uci_nlu), ///
-    legend(label(1 "Variable 1") label(2 "Variable 2")) ///
-    ytitle("Proportion of Observations Equal to 1") ///
-    title("Proportions with Confidence Intervals")
-
-	  
-	  
-	  
-* attempt to create ciplot w conf. int.
-graph bar (mean) nepo_highu nepo_lowu, bargap(20) ///
-    rcap(mean - r(se), mean + r(se)) ///
-    legend(order(1 "Variable 1" 2 "Variable 2"))
-	
-*/
 
 
 * Examining the ratio of nepobabies and all people hired during times of low and high unemployment
@@ -208,6 +159,8 @@ gen ratio_high = nepo_highu_1 / allhire_highu_1
 * To view the ratio of nepobabies hired in high unemployment to non-nepobabies hired in high unemployment
 tab ratio_high
 * The ratio = 0.0987
+* The ratio is also 0.1096174
+** We should probably run that again a few times to see what is going on.
 
 
 * Calculate the number of observations where nepo_lowu = 1
@@ -222,6 +175,7 @@ gen ratio_low = nepo_lowu_1 / allhire_lowu_1
 * To view the ratio of nepobabies hired in low unemployment to non-nepobabies hired in low unemployment
 tab ratio_low
 * The ratio = 0.0607
+* Ratio is also 0.0666041
 
 
 * Calculate the number of observations where nepo_midu = 1

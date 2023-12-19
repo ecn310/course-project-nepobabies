@@ -77,6 +77,10 @@ replace nepo_midlu = . if nepobaby == 0
 * Testing the difference of means between the two 
 ttest nepo_highu == nepo_lowu
 
+ttest nepo_highu == nepo_midhu
+
+ttest nepo_midhu == nepo_midlu
+
 * Visual of the difference in means
 graph bar (mean) nepo_highu (mean) nepo_midhu (mean) nepo_midlu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low Unemployment"')
 

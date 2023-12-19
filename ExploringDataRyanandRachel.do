@@ -124,10 +124,8 @@ gen ratio_high = nepo_highu_1 / allhire_highu_1
 
 * To view the ratio of nepobabies hired in high unemployment to non-nepobabies hired in high unemployment
 tab ratio_high
-* The ratio = 0.0987
-* The ratio is also 0.1096174
 * With four groups the ratio is 0.1023142
-** We should probably run that again a few times to see what is going on.
+
 
 
 * Calculate the number of observations where nepo_lowu = 1
@@ -141,8 +139,6 @@ gen ratio_low = nepo_lowu_1 / allhire_lowu_1
 
 * To view the ratio of nepobabies hired in low unemployment to non-nepobabies hired in low unemployment
 tab ratio_low
-* The ratio = 0.0607
-* Ratio is also 0.0666041
 * Four groups ratio is now 0.0589544
 
 
@@ -228,15 +224,6 @@ ttest femalenepoma == malenepoma
 * Creating bar graph to visualize the t-test
 graph bar (mean) malenepoma (mean) femalenepoma, title(`"Male vs. Female Nepobabies - Mother"')
 
-
- * Sensitivity analysis: minus 3 months
- * Creating a variable that brings the ymhiredate back 3 months
- gen hiredate_minus_3m = ymhiredate - 3
- 
- * Creating a variable that gives us the unemployment rate from three months ago.
-gen urate_minus3m = .
-replace urate_minus3m = unemployrate  ymhiredate == hiredate_minus_3
-
 * Looking at the demographics of nepobabies in high unemployment
 
 * RACE
@@ -282,7 +269,7 @@ gen sample_midup = (class >= 3)
 * Comparing the means of middle/upper class people in the whole sample vs. middle/upper class nepobabies
 ttest sample_midup == nepo_midup, unpaired
 
-* EDUCATION
+* EDUCATION (college educated)
 * Creating variable for college educated nepobabies
 gen nepo_educ = (nepobaby == 1 & educ >= 16)
 
@@ -294,6 +281,18 @@ gen sample_educ = (educ >= 16)
 
 * Comparing the means of college educating people in the whole sample vs. college educated nepobabies
 ttest sample_educ == nepo_educ, unpaired
+
+* EDUCATION (less than high school)
+
+gen nepo_educl = (nepobaby == 1 & educ < 12)
+
+replace nepo_educl = . if nepobaby == 0
+
+gen sample_educl = (educ < 12)
+
+ttest sample_educl == nepo_educl, unpaired
+
+
 
 * HOURS WORKED WEEKLY (self-reported)
 * Creating variable for nepobabies who work overtime
@@ -307,6 +306,15 @@ gen sample_hrs = (hrs1 >= 45)
 
 * Comparing the means of overtime workers in the whole sample vs. overtime working nepobabies
 ttest sample_hrs == nepo_hrs, unpaired
+
+
+gen nepo_hrslow = (nepobaby == 1 & hrs1 < 30)
+
+replace nepo_hrslow = . if nepobaby == 0
+
+gen sample_hrslow = (hrs1 < 30)
+
+ttest sample_hrslow == nepo_hrslow, unpaired
 
 * INCOME
 * Income variable: `realinc` is family income in base year 1986
@@ -324,7 +332,7 @@ gen sample_hinc = (realinc >= 66220)
 ttest sample_hinc == nepo_hinc, unpaired
 
 
-* Creating variable for low income nepobabies (make greater than or equal to the 90th percentile of income: 66220)
+* Creating variable for low income nepobabies (make less than or equal to the 25th percentile of income: 14860.38)
 gen nepo_linc = (nepobaby == 1 & realinc <= 14860.38)
 
 * Labeling irrelevant data as missing to avoid noise/confusion

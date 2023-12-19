@@ -84,6 +84,9 @@ ttest nepo_midhu == nepo_midlu
 * Visual of the difference in means
 graph bar (mean) nepo_highu (mean) nepo_midhu (mean) nepo_midlu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low Unemployment"')
 
+graph export "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\nepobabiespercentile_categories.png", as(png) name("Graph")
+
+
 
 ** Chi square test of all groups of unemployment
 gen unemployrate_groups = .

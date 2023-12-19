@@ -1,6 +1,13 @@
 cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies"
 
-use "GSSclean_noRDs" 
+use "GSSclean_noRDs", clear
+
+use "FREDunemploymentrates1960_2022.dta", clear
+
+sort ymhiredate
+
+merge m:m ymhiredate using FREDunemploymentrates1960_2022.dta
+
  
 ***Keeping only the variables we want to examine
 keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///

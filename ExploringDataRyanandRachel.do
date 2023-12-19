@@ -2,27 +2,6 @@ cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\c
 
 use "GSSclean_noRDs"
 
-use "FREDunemploymentrates1960_2022.dta", clear
-
-sort ymhiredate
-
-merge m:m ymhiredate using FREDunemploymentrates1960_2022.dta
-
- 
-***Keeping only the variables we want to examine
-keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
-jobkeep jobhonor jobinter fndjob2 thisjob7 wrkwell paind16 paind10 paind80 ///
-maind80 maind10 indus10 major1 major2 voedcol voedncol colmajr1 colmajr2 ///
-joblose yearsjob covemply race parborn granborn wealth opwlth income72 ///
-income77 income82 income86 income91 income98 income06 income16 coninc realinc ///
-povline incdef wlthpov progtax oprich inequal3 taxrich taxshare contrich ///
-class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
-skiltest wojobyrs occmobil lastslf gender1 gender2 gender3 gender4 gender5 ///
-gender6 gender7 gender8 gender9 gender10 gender11 gender12 gender13 gender14 ///
-gdjobsec thisjob2
-
-save "GSSclean_noRDs.dta" , replace
-
 ** This prevents false positives from occurring for the nepobaby, panepobaby, and manepobaby variables.
 replace indus10 = 1 if missing(indus10)
 
@@ -34,7 +13,6 @@ gen panepobaby = (indus10 == paind10)
 gen manepobaby = (indus10 == maind10)
 
 **Getting rid of missing data
-drop if year < 1975
 drop if missing(dateintv)
 ** We can only perform analysis for the respondents who answered the `yearsjob` question.
 drop if missing(yearsjob)
@@ -69,12 +47,7 @@ merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Docu
 
 * dropping the few observations that failed to merge data
  drop if _merge == 1
-
-** Run the do-file that inputs unemployment rates by month.
-** This must be corrected to the line: do urate_input.do. For some reason it only works when I have it like this.
-do "urate_input"
-
-"C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\urate_input.do"
+* Leaves us with 3,550 observations
 
 *Creating variable for age when getting job, i.e. age at ymhiredate
 gen agehire = age - yearsjob
@@ -121,16 +94,6 @@ replace unemployrate_groups = 4 if unemployrate >= 6.7
 
 * Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
 tabulate nepobaby unemployrate_groups, chi2
-
-
-
-
-
-*Put this line of code at the beginning
-ssc install ciplot
- 
-* Creates a plot with the confidence intervals of nepo_highu and nepo_lowu. Should edit this to include bars.
-ciplot nepo_highu nepo_lowu
 
 
 * Examining the ratio of nepobabies and all people hired during times of low and high unemployment

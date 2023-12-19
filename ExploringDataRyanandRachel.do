@@ -1,6 +1,6 @@
 cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies"
 
-use "GSSclean_noRDs", clear
+use "GSSclean_noRDs"
 
 use "FREDunemploymentrates1960_2022.dta", clear
 
@@ -62,6 +62,14 @@ gen ymintdate = ym(yearintv, monthintv)
 ** Creates a variable for the month and year a respondent was hired (assuming they were hired exactly the number of years ago they reported) which leaves us with 9,256 variables/.
 gen ymhiredate = ymintdate - (yearsjob * 12)
 
+* Merging FRED unemployment rate datapointssort ymhiredate
+sort ymhiredate
+
+merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\FREDunemploymentrates1960_2022.dta"
+
+* dropping the few observations that failed to merge data
+ drop if _merge == 1
+
 ** Run the do-file that inputs unemployment rates by month.
 ** This must be corrected to the line: do urate_input.do. For some reason it only works when I have it like this.
 do "urate_input"
@@ -79,57 +87,41 @@ drop if agehire > 29
 * The unemployment rates we chose to be considered high and low are first and third quartiles of the unemployment rates over the period of time we look at from 1987-2022
 * We choose to cut out the middle 50% of the observations because we found that it was very noisy. We would change the unemployment rate we found to significant by 0.5 percentage points and get an entirely different result on the t-test.
 * Creating variable for nepobabies hired during high unemployment (third quartile)
-gen nepo_highu = (nepobaby == 1 & unemployrate >= 6.625)
+gen nepo_highu = (nepobaby == 1 & unemployrate >= 6.7)
 * Creating variable for nepobabies hired during low unemployment (first quartile)
-gen nepo_lowu = (nepobaby == 1 & unemployrate <= 4.8)
+gen nepo_lowu = (nepobaby == 1 & unemployrate <= 4.5)
 *Creating a variable for nepobabies hired between the first and third quartile of all monthly unemployment rates.
-gen nepo_midu = (nepobaby == 1) & (unemployrate > 4.8) & (unemployrate < 6.625)
+gen nepo_midlu = (nepobaby == 1) & (unemployrate > 4.8) & (unemployrate <= 5.4)
+
+gen nepo_midhu = (nepobaby == 1) & (unemployrate < 6.7) & (unemployrate > 5.4)
 
 * Making the t-test only for nepobabies, not the whole sample, so that the means are more representative of the nepobaby population
 replace nepo_highu = . if nepobaby == 0
 replace nepo_lowu = . if nepobaby == 0
-replace nepo_midu = . if nepobaby == 0
+replace nepo_midhu = . if nepobaby == 0
+replace nepo_midlu = . if nepobaby == 0
 
 * Testing the difference of means between the two 
 ttest nepo_highu == nepo_lowu
 
 * Visual of the difference in means
-graph bar (mean) nepo_highu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low Unemployment"')
-
-** T-test does not really work because it does not measure what it intends to measure
-ttest nepo_highu == nepo_midu
-ttest nepo_midu == nepo_lowu
-* This should be deleted
-
-
-* Testing at different unemployment rate cutoff: top quartile vs. bottom three quartiles of unemployment rates
-
-gen nepo_high25u = (nepobaby == 1 & unemployrate >= 6.625)
-
-gen nepo_low75u = (nepobaby == 1 & unemployrate < 6.625)
-
-replace nepo_high25u = . if nepobaby == 0
-
-replace nepo_low75u = . if nepobaby == 0
-
-ttest nepo_high25u == nepo_low75u
-* This does not really make sense because of course there will be more nepobabies in 75% of the monthly unemployment rates. Not really testing what it is intended to because there is nothing that holds the two groups constant.
-* This should be deleted, too, because it does not really tell us anything
+graph bar (mean) nepo_highu (mean) nepo_midhu (mean) nepo_midlu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low Unemployment"')
 
 
 ** Chi square test of all groups of unemployment
 gen unemployrate_groups = .
 
-replace unemployrate_groups = 1 if unemployrate <= 4.8
+replace unemployrate_groups = 1 if unemployrate <= 4.5
 
-replace unemployrate_groups = 2 if (unemployrate > 4.8) & (unemployrate < 6.625)
+replace unemployrate_groups = 2 if (unemployrate > 4.5) & (unemployrate <= 5.4)
 
-replace unemployrate_groups = 3 if unemployrate >= 6.625
+replace unemployrate_groups = 3 if (unemployrate > 5.4) & (unemployrate < 6.7)
+
+replace unemployrate_groups = 4 if unemployrate >= 6.7
 
 * Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
 tabulate nepobaby unemployrate_groups, chi2
 
-gen highu_ratio = nepo_highu / allhire_highu
 
 
 
@@ -142,17 +134,21 @@ ciplot nepo_highu nepo_lowu
 
 
 * Examining the ratio of nepobabies and all people hired during times of low and high unemployment
-gen allhire_highu = (unemployrate >= 6.625)
+gen allhire_highu = (unemployrate >= 6.7)
 
 replace allhire_highu = . if nepobaby == 1
 
-gen allhire_lowu = (unemployrate <= 4.8)
+gen allhire_lowu = (unemployrate <= 4.5)
 
 replace allhire_lowu = . if nepobaby == 1
 
-gen allhire_midu = (unemployrate > 4.8) & (unemployrate < 6.625)
+gen allhire_midlu = (unemployrate > 4.5) & (unemployrate <= 5.4)
 
-replace allhire_midu = . if nepobaby == 1
+replace allhire_midlu = . if nepobaby == 1
+
+gen allhire_midhu = (unemployrate > 5.4) & (unemployrate < 6.7)
+
+replace allhire_midhu = . if nepobaby == 1
 
 * Calculate the number of observations where nepo_highu = 1
 egen nepo_highu_1 = total(nepo_highu == 1)
@@ -167,6 +163,7 @@ gen ratio_high = nepo_highu_1 / allhire_highu_1
 tab ratio_high
 * The ratio = 0.0987
 * The ratio is also 0.1096174
+* With four groups the ratio is 0.1023142
 ** We should probably run that again a few times to see what is going on.
 
 
@@ -183,35 +180,43 @@ gen ratio_low = nepo_lowu_1 / allhire_lowu_1
 tab ratio_low
 * The ratio = 0.0607
 * Ratio is also 0.0666041
+* Four groups ratio is now 0.0589544
 
 
 * Calculate the number of observations where nepo_midu = 1
-egen nepo_midu_1 = total(nepo_midu == 1)
+egen nepo_midhu_1 = total(nepo_midhu == 1)
 
 * Calculate the number of observations where allhire_midu = 1
-egen allhire_midu_1 = total(allhire_midu == 1)
+egen allhire_midhu_1 = total(allhire_midhu == 1)
 
 * Calculate the ratio
-gen ratio_mid = nepo_midu_1 / allhire_midu_1
+gen ratio_midh = nepo_midhu_1 / allhire_midhu_1
 
 * To view the ratio of nepobabies hired in "middle" unemployment to non-nepobabies hired in "middle" unemployment
-tab ratio_mid
-* The ratio = 0.0914
+tab ratio_midh
+* Ratio is 0.1065341
+
+
+
+* Calculate the number of observations where nepo_midu = 1
+egen nepo_midlu_1 = total(nepo_midlu == 1)
+
+* Calculate the number of observations where allhire_midu = 1
+egen allhire_midlu_1 = total(allhire_midlu == 1)
+
+* Calculate the ratio
+gen ratio_midl = nepo_midlu_1 / allhire_midlu_1
+
+* To view the ratio of nepobabies hired in "middle" unemployment to non-nepobabies hired in "middle" unemployment
+tab ratio_midl
+* Ratio is 0.0607866
+
+
+
+
 
 *To graphically view the relationships of all the ratios
-graph bar (mean) ratio_high (mean) ratio_mid (mean) ratio_low, blabel(bar) ytitle(Ratio of Nepobabies to Non-Nepobabies) title(Nepotism Hiring in Different Labor Markets) legend(order(1 "high unemployment hire" 2 "median unemployment hire" 3 "low unemployment hire"))
-
-
-** The following commands create the frequency table showing the amounts of observations of nepobabies and non-nepobabies hired during different unemployment rates.
-gen hire_urate = .
-
-replace hire_urate = 1 if (unemployrate <= 4.8)
-
-replace hire_urate = 2 if (unemployrate > 4.8) & (unemployrate < 6.625)
-
-replace hire_urate = 3 if (unemployrate >= 6.625)
-
-tab hire_urate nepobaby
+ graph bar (mean) ratio_high (mean) ratio_midh (mean) ratio_midl (mean) ratio_low, blabel(bar) ytitle("Ratio of Nepobabies to Non-Nepobabies") title("Nepotism Hiring in Different Labor Markets") legend(order(1 "high unemployment hire" 2 "mid-high unemployment hire" 3 "mid-low unemployment hire" 4 "low unemployment hire"))
 
 
 * Testing to see how nepobaby rates change with gender of parent and child

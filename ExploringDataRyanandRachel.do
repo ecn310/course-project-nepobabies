@@ -64,7 +64,7 @@ gen nepo_highu = (nepobaby == 1 & unemployrate >= 6.7)
 * Creating variable for nepobabies hired during low unemployment (first quartile)
 gen nepo_lowu = (nepobaby == 1 & unemployrate <= 4.5)
 *Creating a variable for nepobabies hired between the first and third quartile of all monthly unemployment rates.
-gen nepo_midlu = (nepobaby == 1) & (unemployrate > 4.8) & (unemployrate <= 5.4)
+gen nepo_midlu = (nepobaby == 1) & (unemployrate > 4.5) & (unemployrate <= 5.4)
 
 gen nepo_midhu = (nepobaby == 1) & (unemployrate < 6.7) & (unemployrate > 5.4)
 

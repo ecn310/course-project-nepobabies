@@ -1,1 +1,15 @@
-Reproducibiilty steps
+### Nepobabies Reproducibility Package
+
+1. In our OneDrive folder, you can find the original dataset given to us by Professor Zhu containing the 1972-2022 General Social Survey dataset.
+Using the following lines of code, we kept only the variables we were interested in looking at, allowing us to reduce the size of the file and the number of irrelevant variables:
+
+keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
+jobkeep jobhonor jobinter fndjob2 thisjob7 wrkwell paind16 paind10 paind80 ///
+maind80 maind10 indus10 major1 major2 voedcol voedncol colmajr1 colmajr2 ///
+joblose yearsjob covemply race parborn granborn wealth opwlth income72 ///
+income77 income82 income86 income91 income98 income06 income16 coninc realinc ///
+povline incdef wlthpov progtax oprich inequal3 taxrich taxshare contrich ///
+class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
+skiltest wojobyrs occmobil lastslf gender1 gender2 gender3 gender4 gender5 ///
+gender6 gender7 gender8 gender9 gender10 gender11 gender12 gender13 gender14 ///
+gdjobsec thisjob2

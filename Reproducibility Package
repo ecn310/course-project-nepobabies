@@ -1,4 +1,5 @@
-### Nepobabies Reproducibility Package
+## Nepobabies Reproducibility Package
+#### Steps Taken to Produce Nepobaby Results
 
 1. In our OneDrive folder, linked below, you can find the original dataset given to us by Professor Zhu containing the 1972-2022 General Social Survey dataset.
 https://sumailsyr-my.sharepoint.com/personal/rhrabino_syr_edu/_layouts/15/onedrive.aspx?ct=1696616219053&or=OWA%2DNT&cid=87642c6f%2D751b%2Dbfc3%2D8c20%2D489c586e0930&fromShare=true&ga=1&id=%2Fpersonal%2Frhrabino%5Fsyr%5Fedu%2FDocuments%2FECN%20310%20Project
@@ -21,6 +22,10 @@ It is important to note that we did not use all of those variables for varying r
 
 3. We use the do-file called "nepobabies.do" to complete our analysis. 
 
-4. We downloaded a dataset 
+4. We downloaded the FRED monthly unemployment rate dataset as an excel from the following website: https://fred.stlouisfed.org/series/UNRATE
+We chose the range of months to be (1960-01-01) to (2022-12-01)
+In excel, we deleted the rows above the data so that it could be merged into stata. We also created a new column, column C, and made it "ymhiredate" or the representative number in Stata for the year in month, with January of 1960 being 0 and every month after being the next counting number.
+We then saved the excel dataset .xls as a stata dataset .dta so that it could be merged.
 
-4. We merged the FRED monthly unemployment rate dataset titled into the 
+5. We merged the FRED monthly unemployment rate dataset titled "FREDunemploymentrates1960_2022.dta" into "GSSclean_noRDs.dta" using a command in our main do-file.
+

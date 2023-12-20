@@ -12,6 +12,15 @@ joblose yearsjob covemply race parborn granborn wealth opwlth income72 ///
 income77 income82 income86 income91 income98 income06 income16 coninc realinc ///
 povline incdef wlthpov progtax oprich inequal3 taxrich taxshare contrich ///
 class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
-skiltest wojobyrs occmobil lastslf gender1 gender2 gender3 gender4 gender5 ///
-gender6 gender7 gender8 gender9 gender10 gender11 gender12 gender13 gender14 ///
-gdjobsec thisjob2
+skiltest wojobyrs occmobil lastslf gdjobsec thisjob2 ///
+
+It is important to note that we did not use all of those variables for varying reasons, mostly that observations were not taken during any or most of our survey years.
+
+
+2. We saved that dataset as a .dta file and titled it "GSSclean_noRDs"
+
+3. We use the do-file called "nepobabies.do" to complete our analysis. 
+
+4. We downloaded a dataset 
+
+4. We merged the FRED monthly unemployment rate dataset titled into the 

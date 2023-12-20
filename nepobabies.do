@@ -5,18 +5,19 @@ use "GSSclean_noRDs"
 ** This prevents false positives from occurring for the nepobaby, panepobaby, and manepobaby variables.
 replace indus10 = 1 if missing(indus10)
 
-**Creating dummy variable for nepobaby = 1 if respondent is in the same industry as their mother or father, 0 otherwise
+** Creating dummy variable for nepobaby = 1 if respondent is in the same industry as their mother or father, 0 otherwise
 gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
 ** Create variable for being in the same industry as ONLY a respondent's father. (same false positives as nepobaby)
 gen panepobaby = (indus10 == paind10)
 ** Create variable for being in the same industry as ONLY a respondent's mother. (same false positives as nepobaby)
 gen manepobaby = (indus10 == maind10)
 
-**Getting rid of missing data
+** Getting rid of missing data
+** dateintv variable needed to determine hire date.
 drop if missing(dateintv)
 ** We can only perform analysis for the respondents who answered the `yearsjob` question.
 drop if missing(yearsjob)
-*Dropping observations for age not recorded - cannot accurately measure agehire without age.
+** Dropping observations for age not recorded - cannot accurately measure agehire without age.
 drop if missing(age)
 
 * Convert dateintv to a string for easier manipulation
@@ -40,32 +41,32 @@ gen ymintdate = ym(yearintv, monthintv)
 ** Creates a variable for the month and year a respondent was hired (assuming they were hired exactly the number of years ago they reported) which leaves us with 9,256 variables/.
 gen ymhiredate = ymintdate - (yearsjob * 12)
 
-* Merging FRED unemployment rate datapointssort ymhiredate
+* For ease of merging FRED data
 sort ymhiredate
 
+* Merging FRED unemployment rate based on ymhiredate variable
 merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\FREDunemploymentrates1960_2022.dta"
 
 * dropping the few observations that failed to merge data
  drop if _merge == 1
 * Leaves us with 3,550 observations
 
-*Creating variable for age when getting job, i.e. age at ymhiredate
+* Creating variable for age at time of hiring, i.e. age at ymhiredate
 gen agehire = age - yearsjob
 
-* Keeping observations only of target group; young adults
+* Keeping observations only of target group; people hired as young adults
 drop if agehire > 29
 
 
-* We create two groups of nepobabies to test the difference in means for differently competitive labor markets.
-* The unemployment rates we chose to be considered high and low are first and third quartiles of the unemployment rates over the period of time we look at from 1987-2022
-* We choose to cut out the middle 50% of the observations because we found that it was very noisy. We would change the unemployment rate we found to significant by 0.5 percentage points and get an entirely different result on the t-test.
-* Creating variable for nepobabies hired during high unemployment (third quartile)
+* We create four groups of nepobabies to test the difference in means for differently competitive labor markets.
+* The unemployment rates we chose to be considered high and low are first and fourth quartiles of the unemployment rates over the period of time we look at from 1960-2022
+* Creating variable for nepobabies hired during high unemployment (fourth quartile)
 gen nepo_highu = (nepobaby == 1 & unemployrate >= 6.7)
 * Creating variable for nepobabies hired during low unemployment (first quartile)
 gen nepo_lowu = (nepobaby == 1 & unemployrate <= 4.5)
-*Creating a variable for nepobabies hired between the first and third quartile of all monthly unemployment rates.
+*Creating a variable for nepobabies hired in mid-low unemployment (second quartile)
 gen nepo_midlu = (nepobaby == 1) & (unemployrate > 4.5) & (unemployrate <= 5.4)
-
+* Creating a variable for nepobabies hired in mid-high unemployment (third quartile)
 gen nepo_midhu = (nepobaby == 1) & (unemployrate < 6.7) & (unemployrate > 5.4)
 
 * Making the t-test only for nepobabies, not the whole sample, so that the means are more representative of the nepobaby population

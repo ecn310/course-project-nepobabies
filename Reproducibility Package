@@ -1,6 +1,8 @@
 ### Nepobabies Reproducibility Package
 
-1. In our OneDrive folder, you can find the original dataset given to us by Professor Zhu containing the 1972-2022 General Social Survey dataset.
+1. In our OneDrive folder, linked below, you can find the original dataset given to us by Professor Zhu containing the 1972-2022 General Social Survey dataset.
+https://sumailsyr-my.sharepoint.com/personal/rhrabino_syr_edu/_layouts/15/onedrive.aspx?ct=1696616219053&or=OWA%2DNT&cid=87642c6f%2D751b%2Dbfc3%2D8c20%2D489c586e0930&fromShare=true&ga=1&id=%2Fpersonal%2Frhrabino%5Fsyr%5Fedu%2FDocuments%2FECN%20310%20Project
+The title of the dataset is "gss7222_r1.dta"
 Using the following lines of code, we kept only the variables we were interested in looking at, allowing us to reduce the size of the file and the number of irrelevant variables:
 
 keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///

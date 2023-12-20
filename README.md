@@ -8,5 +8,5 @@ We examine the effects of young adults entering the workforce during competitive
 
 ## Contents
 1. Final report
-2. Reproducibility package
+2. [Reproducibility Package](https://github.com/ecn310/course-project-nepobabies/blob/main/Reproducibility%20Package)
 3. Working folder

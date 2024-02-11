@@ -259,6 +259,9 @@ replace nepo_male = . if nepobaby == 0
 * Creating a variable for the sample of males surveyed
 gen sample_male = (sex == 1)
 
+* Preventing male nepobabies from being counted in the sample group
+sample_male = . if nepobaby == 0
+
 * Comparing the means of males in the whole sample vs. male nepobabies
 ttest sample_male == nepo_male, unpaired
 

@@ -207,6 +207,27 @@ replace femalenepopa = . if (maind10 == paind10)
 *Testing the significance in the differences between the proportion of male and female nepobabies with the same industry as their father.
 ttest femalenepopa == malenepopa
 
+
+*Adding in a chi-square test for the association between gender of respondent and being a nepobaby 
+
+gen nepogender = 1 if sex == 1
+replace nepogender = 2 if sex == 2
+replace nepogender = . if nepobaby == 0
+gen nepoparentsex = 1 if (indus10 == paind10)
+replace nepoparentsex = 2 if (indus10 == maind10)
+replace nepoparentsex = . if (indus10 != paind10 & indus10 != maind10)
+
+tab nepogender nepoparentsex, chi2
+*This must be re-run to be accurate when all the other code has been run. I did this without running most of the previous code, except for loading in the dataset and creating the nepobaby variable.
+
+
+
+
+
+
+
+
+
 * Creating bar graph to visualize the t-test
 graph bar (mean) malenepopa (mean) femalenepopa, title(`"Male vs. Female Nepobabies - Father"')
 

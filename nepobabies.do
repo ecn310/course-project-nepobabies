@@ -218,14 +218,7 @@ replace nepoparentsex = 2 if (indus10 == maind10)
 replace nepoparentsex = . if (indus10 != paind10 & indus10 != maind10)
 
 tab nepogender nepoparentsex, chi2
-*This must be re-run to be accurate when all the other code has been run. I did this without running most of the previous code, except for loading in the dataset and creating the nepobaby variable.
-
-
-
-
-
-
-
+*Ran this code, got a very strong result with a p-value of 0.000
 
 
 * Creating bar graph to visualize the t-test
@@ -251,7 +244,7 @@ replace femalenepoma = . if (maind10 == paind10)
 ttest femalenepoma == malenepoma
 
 * Creating bar graph to visualize the t-test
-graph bar (mean) malenepoma (mean) femalenepoma, title(`"Male vs. Female Nepobabies - Mother"')
+graph bar (mean) malenepoma (mean) femalenepoma,  title(`"Male vs. Female Nepobabies - Mother"')
 
 * Looking at the demographics of nepobabies in high unemployment
 
@@ -269,6 +262,16 @@ gen sample_white = (race == 1)
 ttest sample_white == nepo_white, unpaired
 
 graph bar (mean) sample_white (mean) nepo_white, title(`"Race for Nepobabies vs Sample"')
+
+
+
+* Creating a chi-square test for nepobaby race vs. sample race
+tab nepobaby race, chi2
+* This yields an insignificant result
+
+
+
+
 
 * GENDER
 * Creating variable for male nepobabies
@@ -288,6 +291,12 @@ ttest sample_male == nepo_male, unpaired
 
 graph bar (mean) sample_male (mean) nepo_male
 
+
+
+**Creating a chi-square test for nepobaby and gender
+tab nepobaby sex, chi2
+* This test yields an insignificant result
+
 * CLASS (self-reported)
 * Creating variable for middle and upper class nepobabies
 gen nepo_midup = (nepobaby == 1 & class >= 3)
@@ -300,6 +309,11 @@ gen sample_midup = (class >= 3)
 
 * Comparing the means of middle/upper class people in the whole sample vs. middle/upper class nepobabies
 ttest sample_midup == nepo_midup, unpaired
+
+
+* Creating a chi-square test for nepobaby and class
+tab nepobaby class, chi2
+* This yields an insignifcant result
 
 * EDUCATION (college educated)
 * Creating variable for college educated nepobabies
@@ -325,6 +339,9 @@ gen sample_educl = (educ < 12)
 ttest sample_educl == nepo_educl, unpaired
 
 
+* Creating a chi-square test for nepobaby and education
+tab nepobaby educ, chi2
+
 
 * HOURS WORKED WEEKLY (self-reported)
 * Creating variable for nepobabies who work overtime
@@ -347,6 +364,23 @@ replace nepo_hrslow = . if nepobaby == 0
 gen sample_hrslow = (hrs1 < 30)
 
 ttest sample_hrslow == nepo_hrslow, unpaired
+
+* Creating a chi-square test for nepobaby and weekly hours worked
+tab nepobaby hrs1, chi2
+* I actually think that the t-test was the right call for this, except that it was done incorrectly. But the t-test is correct because nepobaby is categorical and hrs worked is quantitative
+
+* New t-test for hours worked
+
+gen samplehrs = hrs1
+replace samplehrs = . if nepobaby == 1
+
+gen nepohrs = hrs1
+replace nepohrs = . if nepobaby != 1
+
+ttest nepohrs == samplehrs, unpaired
+* This yields an insignificant difference between the two.
+
+
 
 * INCOME
 * Income variable: `realinc` is family income in base year 1986
@@ -375,6 +409,20 @@ gen sample_linc = (realinc <= 14860.38)
 
 * Comparing the means of males in the whole sample vs. male nepobabies
 ttest sample_linc == nepo_linc, unpaired
+
+
+* Creating a proper t-0test for nepobabies and income
+
+gen sample_inc = realinc
+replace sample_inc = . if nepobaby == 1
+
+gen nepoinc = realinc
+replace nepoinc = . if nepobaby != 1
+
+ttest sample_inc == nepoinc, unpaired
+* Yield a result of no significant difference
+
+
 
 * JOB SAFETY
 

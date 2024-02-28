@@ -442,3 +442,7 @@ ttest sample_safe == nepo_safe, unpaired
 
 * Creating bar graph for this t-test
 graph bar (mean) sample_safe (mean) nepo_safe, title(`"Job Safety for Nepobabies and Sample"')
+
+* Creating chi-square test for nepobaby and job safety
+tab nepobaby joblose, chi2
+* This yielded a significant result, similar to the t-test.

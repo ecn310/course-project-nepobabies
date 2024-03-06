@@ -103,6 +103,26 @@ replace unemployrate_groups = 4 if unemployrate >= 6.7
 tabulate nepobaby unemployrate_groups, chi2
 
 
+
+
+*** START OF SENSITIVTY ANALYSIS ... CURRENT CODE IS A PLACE FILLER ***
+
+gen ymhiredate_3m = ymhiredate - 3
+
+merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\FREDunemploymentrates1960_2022.dta"
+* Except this would be a dataset specially created to have a ymhiredate that is 3 less than the original FRED unemployment data set.
+
+* then I would regenerate the unemployment rate groups based on the different unemployment rates, but using the same parameters to create the groups.
+
+* then I would simply do the chi-square analysis, that would look something like...
+* tabulate nepobaby unemployrate_groups_3m, chi2
+
+
+
+
+
+
+
 * Examining the ratio of nepobabies and all people hired during times of low and high unemployment
 gen allhire_highu = (unemployrate >= 6.7)
 

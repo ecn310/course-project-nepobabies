@@ -209,14 +209,14 @@ ttest femalenepopa == malenepopa
 
 *Adding in a chi-square test for the association between gender of respondent and being a nepobaby 
 
-gen nepogender = 1 if sex == 1
-replace nepogender = 2 if sex == 2
-replace nepogender = . if nepobaby == 0
+gen neposex = 1 if sex == 1
+replace neposex = 2 if sex == 2
+replace neposex = . if nepobaby == 0
 gen nepoparentsex = 1 if (indus10 == paind10)
 replace nepoparentsex = 2 if (indus10 == maind10)
 replace nepoparentsex = . if (indus10 != paind10 & indus10 != maind10)
 
-tab nepogender nepoparentsex, chi2
+tab neposex nepoparentsex, chi2
 *Ran this code, got a very strong result with a p-value of 0.000
 
 

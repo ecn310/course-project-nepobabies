@@ -215,13 +215,40 @@ replace neposex = . if nepobaby == 0
 gen nepoparentsex = 1 if (indus10 == paind10)
 replace nepoparentsex = 2 if (indus10 == maind10)
 replace nepoparentsex = . if (indus10 != paind10 & indus10 != maind10)
+replace nepoparentsex = . if (paind10 == maind10)
 
 tab neposex nepoparentsex, chi2
 *Ran this code, got a very strong result with a p-value of 0.000
 
 
+
+
+
+
+
 * Creating bar graph to visualize the t-test
 graph bar (mean) malenepopa (mean) femalenepopa, title(`"Male vs. Female Nepobabies - Father"')
+
+* Creating a better bar graphically
+gen nepomale = 1 if sex == 1
+replace nepomale = . if nepobaby == 0
+replace nepomale = . if (paind10 == maind10)
+gen nepofemale = 1 if sex == 2
+replace nepofemale = . if nepobaby == 0
+replace nepofemale = . if (paind10 == maind10)
+tab nepomale
+tab nepofemale
+
+gen nepoparentsex_label = ""
+replace nepoparentsex_label = "Nepotistic Father" if nepoparentsex == 1
+replace nepoparentsex_label = "Nepotistic Mother" if nepoparentsex == 2
+
+
+graph bar (count) nepomale nepofemale, over(nepoparentsex_label) ///
+    stack ///
+    title("Proportion of Male and Female Nepobabies by Nepotistic Parent Sex", size(medsmall)) ///
+    legend(label(1 "Male Nepobabies") label(2 "Female Nepobabies")) ///
+	ytitle("Nepobaby Count")
 
 
 ** Nepobaby by MOTHER

@@ -49,14 +49,13 @@ merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Docu
 
 * dropping the few observations that failed to merge data
  drop if _merge == 1
-* Leaves us with 3,550 observations
 
 * Creating variable for age at time of hiring, i.e. age at ymhiredate
 gen agehire = age - yearsjob
 
 * Keeping observations only of target group; people hired as young adults
 drop if agehire > 29
-
+* Leaves us with 3,550 observations
 
 * We create four groups of nepobabies to test the difference in means for differently competitive labor markets.
 * The unemployment rates we chose to be considered high and low are first and fourth quartiles of the unemployment rates over the period of time we look at from 1960-2022
@@ -176,7 +175,7 @@ gen ratio_midl = nepo_midlu_1 / allhire_midlu_1
 
 * To view the ratio of nepobabies hired in "middle" unemployment to non-nepobabies hired in "middle" unemployment
 tab ratio_midl
-* Ratio is 0.0607866
+* Ratio is 0.0893921
 
 
 

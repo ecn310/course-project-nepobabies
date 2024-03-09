@@ -41,6 +41,12 @@ gen ymintdate = ym(yearintv, monthintv)
 ** Creates a variable for the month and year a respondent was hired (assuming they were hired exactly the number of years ago they reported) which leaves us with 9,256 variables/.
 gen ymhiredate = ymintdate - (yearsjob * 12)
 
+gen ymhiredate_m3 = ymintdate - (yearsjob * 12) - 3
+gen ymhiredate_m6 = ymintdate - (yearsjob * 12) - 6
+gen ymhiredate_p3 = ymintdate - (yearsjob * 12) + 3
+gen ymhiredate_p6 = ymintdate - (yearsjob * 12) + 6
+
+
 * For ease of merging FRED data
 sort ymhiredate
 
@@ -49,6 +55,7 @@ merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Docu
 
 * dropping the few observations that failed to merge data
  drop if _merge == 1
+ drop if _merge == 2
 
 * Creating variable for age at time of hiring, i.e. age at ymhiredate
 gen agehire = age - yearsjob

@@ -128,6 +128,55 @@ merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Docu
 
 
 
+*** EVERYTHING BELOW THIS IN THE SENSITIVITY ANALYSIS SECTION DOES NOT WORK AS INTENDED
+* creates ymhiredate_m3
+bysort ymhiredate: egen unemployrate_m3 = mean(unemployrate[_n-3]) if _n > 3
+
+describe
+
+** Chi square test of all groups of unemployment (ymhiredate of 3 months earlier)
+gen unemployrate_groups_m3 = .
+
+replace unemployrate_groups_m3 = 1 if unemployrate_m3 <= 4.5
+
+replace unemployrate_groups_m3 = 2 if (unemployrate_m3 > 4.5) & (unemployrate_m3 <= 5.4)
+
+replace unemployrate_groups_m3 = 3 if (unemployrate_m3 > 5.4) & (unemployrate_m3 < 6.7)
+
+replace unemployrate_groups_m3 = 4 if unemployrate_m3 >= 6.7
+
+* Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
+tabulate nepobaby unemployrate_groups_m3, chi2
+
+
+* creates ymhiredate_m6
+bysort ymhiredate: egen unemployrate_m6 = mean(unemployrate[_n-6]) if _n > 6
+
+** Chi square test of all groups of unemployment (ymhiredate of 6 months earlier)
+gen unemployrate_groups_m6 = .
+
+replace unemployrate_groups_m6 = 1 if unemployrate_m6 <= 4.5
+
+replace unemployrate_groups_m6 = 2 if (unemployrate_m6 > 4.5) & (unemployrate_m6 <= 5.4)
+
+replace unemployrate_groups_m6 = 3 if (unemployrate_m6 > 5.4) & (unemployrate_m6 < 6.7)
+
+replace unemployrate_groups_m6 = 4 if unemployrate_m6 >= 6.7
+
+* Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
+tabulate nepobaby unemployrate_groups_m6, chi2
+
+
+
+* WHAT IS ABOVE IS NOT RIGHT
+* TRYING IT A DIFFERENT WAY
+
+gen ymhiredate_m3 = ymhiredate - 3
+merge 1:1 ymhiredate using GSSclean_test.dta
+drop if _merge != 3
+drop _merge
+
+
 
 
 

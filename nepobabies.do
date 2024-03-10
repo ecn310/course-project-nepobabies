@@ -41,12 +41,6 @@ gen ymintdate = ym(yearintv, monthintv)
 ** Creates a variable for the month and year a respondent was hired (assuming they were hired exactly the number of years ago they reported) which leaves us with 9,256 variables/.
 gen ymhiredate = ymintdate - (yearsjob * 12)
 
-gen ymhiredate_m3 = ymintdate - (yearsjob * 12) - 3
-gen ymhiredate_m6 = ymintdate - (yearsjob * 12) - 6
-gen ymhiredate_p3 = ymintdate - (yearsjob * 12) + 3
-gen ymhiredate_p6 = ymintdate - (yearsjob * 12) + 6
-
-
 * For ease of merging FRED data
 sort ymhiredate
 
@@ -118,6 +112,8 @@ tabulate nepobaby unemployrate_groups, chi2
 
 gen ymhiredate_m3 = ymhiredate
 
+drop _merge
+
 merge m:m ymhiredate_m3 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\minus3.dta"
 
 drop if _merge == 1
@@ -136,7 +132,8 @@ replace unemployrate_groups_m3 = 4 if unemployrate_m3 >= 6.7
 
 * Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
 tabulate nepobaby unemployrate_groups_m3, chi
-* This gave me the same exact result as the normally defined ymhiredate values. Something wrong here, but could still be on the right track.
+* This seems to have worked! In the sense that it performed the analysis I wanted it to.
+* It also seems to have worked in the sense that it passed the robustness check!
 
 
 

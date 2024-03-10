@@ -119,7 +119,6 @@ merge m:m ymhiredate_m3 using "C:\Users\rpseely\OneDrive - Syracuse University\D
 drop if _merge == 1
 drop if _merge == 2
 
-replace unemployrate_groups_m3 = . if yearsjob < 1
 
 ** Chi square test of all groups of unemployment (ymhiredate of 3 months earlier)
 gen unemployrate_groups_m3 = .
@@ -132,10 +131,12 @@ replace unemployrate_groups_m3 = 3 if (unemployrate_m3 > 5.4) & (unemployrate_m3
 
 replace unemployrate_groups_m3 = 4 if unemployrate_m3 >= 6.7
 
+replace unemployrate_groups_m3 = . if yearsjob < 1
+
 * Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
 tabulate nepobaby unemployrate_groups_m3, chi
 * This seems to have worked! In the sense that it performed the analysis I wanted it to.
-* It also seems to have worked in the sense that it passed the robustness check!
+* It gives us a p-value of 0.089, so it does not pass at the 0.95 level but does at the 0.90 level. Something to make note of in the results!
 
 
 

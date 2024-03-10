@@ -119,6 +119,8 @@ merge m:m ymhiredate_m3 using "C:\Users\rpseely\OneDrive - Syracuse University\D
 drop if _merge == 1
 drop if _merge == 2
 
+replace unemployrate_groups_m3 = . if yearsjob < 1
+
 ** Chi square test of all groups of unemployment (ymhiredate of 3 months earlier)
 gen unemployrate_groups_m3 = .
 

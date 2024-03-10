@@ -116,6 +116,7 @@ tabulate nepobaby unemployrate_groups, chi2
 
 *** START OF SENSITIVTY ANALYSIS ... CURRENT CODE IS A PLACE FILLER ***
 
+gen ymhiredate_m3 = ymhiredate
 
 merge m:m ymhiredate_m3 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\minus3.dta"
 

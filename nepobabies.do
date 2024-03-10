@@ -51,12 +51,14 @@ gen ymhiredate_p6 = ymintdate - (yearsjob * 12) + 6
 sort ymhiredate
 
 * Merging FRED unemployment rate based on ymhiredate variable
-merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\FREDunemploymentrates1960_2022.dta"
+merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\FRED_unrate_60to22_robust.dta"
 
 * dropping the few observations that failed to merge data
  drop if _merge == 1
  drop if _merge == 2
 
+rename UNRATE unemployrate
+ 
 * Creating variable for age at time of hiring, i.e. age at ymhiredate
 gen agehire = age - yearsjob
 

@@ -1,5 +1,7 @@
+* Direct file path
 cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies"
 
+* Direct Stata to use the cleaned GSS dataset
 use "GSSclean_noRDs"
 
 ** This prevents false positives from occurring for the nepobaby, panepobaby, and manepobaby variables.

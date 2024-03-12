@@ -46,6 +46,7 @@ sort ymhiredate
 
 * Merging FRED unemployment rate based on ymhiredate variable
 merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\FRED_unrate_60to22_robust.dta"
+**** THIS NEEDS TO BE FIXED, LIKE ALTER THE DATASET SO THAT IT IS JUST ymhiredate AND DOES NOT INCLUDE ymhiredate_m3, etc.
 
 * dropping the few observations that failed to merge data
  drop if _merge == 1
@@ -110,6 +111,8 @@ tabulate nepobaby unemployrate_groups, chi2
 
 *** START OF SENSITIVTY ANALYSIS ... CURRENT CODE IS A PLACE FILLER ***
 
+
+* SA FOR MINUS 3
 gen ymhiredate_m3 = ymhiredate
 
 drop _merge
@@ -140,12 +143,114 @@ tabulate nepobaby unemployrate_groups_m3, chi
 
 
 
-* Except this would be a dataset specially created to have a ymhiredate that is 3 less than the original FRED unemployment data set.
 
-* then I would regenerate the unemployment rate groups based on the different unemployment rates, but using the same parameters to create the groups.
+* SA FOR MINUS 6
+gen ymhiredate_m6 = ymhiredate
 
-* then I would simply do the chi-square analysis, that would look something like...
-* tabulate nepobaby unemployrate_groups_3m, chi2
+drop _merge
+
+merge m:m ymhiredate_m6 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\minus6.dta"
+
+drop if _merge == 1
+drop if _merge == 2
+
+
+** Chi square test of all groups of unemployment (ymhiredate of 6 months earlier)
+gen unemployrate_groups_m6 = .
+
+replace unemployrate_groups_m6 = 1 if unemployrate_m6 <= 4.5
+
+replace unemployrate_groups_m6 = 2 if (unemployrate_m6 > 4.5) & (unemployrate_m6 <= 5.4)
+
+replace unemployrate_groups_m6 = 3 if (unemployrate_m6 > 5.4) & (unemployrate_m6 < 6.7)
+
+replace unemployrate_groups_m6 = 4 if unemployrate_m6 >= 6.7
+
+replace unemployrate_groups_m6 = . if yearsjob < 1
+
+* Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
+tabulate nepobaby unemployrate_groups_m6, chi
+*  p-value of 0.085, so it does not pass the sensitivity analysis at the 0.95 significance level, but it does at the 0.90 significance level
+
+
+
+
+
+
+
+
+
+* SA FOR PLUS 3
+gen ymhiredate_p3 = ymhiredate
+
+drop _merge
+
+merge m:m ymhiredate_p3 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\plus3.dta"
+
+drop if _merge == 1
+drop if _merge == 2
+
+
+** Chi square test of all groups of unemployment (ymhiredate of 6 months earlier)
+gen unemployrate_groups_p3 = .
+
+replace unemployrate_groups_p3 = 1 if unemployrate_p3 <= 4.5
+
+replace unemployrate_groups_p3 = 2 if (unemployrate_p3 > 4.5) & (unemployrate_p3 <= 5.4)
+
+replace unemployrate_groups_p3 = 3 if (unemployrate_p3 > 5.4) & (unemployrate_p3 < 6.7)
+
+replace unemployrate_groups_p3 = 4 if unemployrate_p3 >= 6.7
+
+replace unemployrate_groups_p3 = . if yearsjob < 1
+
+* Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
+tabulate nepobaby unemployrate_groups_p3, chi
+* p-value of 0.187, so does not pass the sensitivity analysis :(
+
+
+
+
+
+
+
+
+* SA FOR PLUS 6
+gen ymhiredate_p6 = ymhiredate
+
+drop _merge
+
+merge m:m ymhiredate_p6 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\plus6.dta"
+
+drop if _merge == 1
+drop if _merge == 2
+
+
+** Chi square test of all groups of unemployment (ymhiredate of 6 months earlier)
+gen unemployrate_groups_p6 = .
+
+replace unemployrate_groups_p6 = 1 if unemployrate_p6 <= 4.5
+
+replace unemployrate_groups_p6 = 2 if (unemployrate_p6 > 4.5) & (unemployrate_p6 <= 5.4)
+
+replace unemployrate_groups_p6 = 3 if (unemployrate_p6 > 5.4) & (unemployrate_p6 < 6.7)
+
+replace unemployrate_groups_p6 = 4 if unemployrate_p6 >= 6.7
+
+replace unemployrate_groups_p6 = . if yearsjob < 1
+
+* Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
+tabulate nepobaby unemployrate_groups_p6, chi
+* p-value of 0.0.23, so it does pass the sensitivity analysis :)
+
+
+
+
+
+
+
+
+
 
 
 

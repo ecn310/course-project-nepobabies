@@ -59,6 +59,18 @@ rename UNRATE unemployrate
 * Creating variable for age at time of hiring, i.e. age at ymhiredate
 gen agehire = age - yearsjob
 
+
+* Association between being a nepobaby and hired young
+gen hireyoung = .
+
+replace hireyoung = 1 if (agehire > 30)
+
+replace hireyoung = 2 if (age hire <= 30)
+
+tab hireyoung nepobaby, chi2
+* Significant association
+
+
 * Keeping observations only of target group; people hired as young adults
 drop if agehire > 29
 * Leaves us with 3,550 observations

@@ -68,6 +68,8 @@ replace hireyoung = 1 if (agehire > 30)
 replace hireyoung = 2 if (age hire <= 30)
 
 tab hireyoung nepobaby, chi2
+
+logit nepobaby hireyoung
 * Significant association
 
 

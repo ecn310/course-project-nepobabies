@@ -21,6 +21,8 @@ drop if missing(dateintv)
 drop if missing(yearsjob)
 ** Dropping observations for age not recorded - cannot accurately measure agehire without age.
 drop if missing(age)
+* dropping because the 2022 survey year does not include necessary variables for defining a variable.
+drop if yearintv == 2022
 
 * Convert dateintv to a string for easier manipulation
 gen dateintv_str = string(dateintv)
@@ -74,22 +76,28 @@ tab hireyoung nepobaby, chi2
 
 logit nepobaby agehire, or
 * Significant association
-* Should probably move this to another section, or keep it at the top to say this is why we focus on young adults.
+* Should probably move this to data section, or keep it at the top to say this is why we focus on young adults.
+* Odds ratio = 0.9676843 , so 3.3% decrease in likelihood of being a nepobaby associated with being hired each year older.
+* need to run this again without 2022 data
 
 * Keeping observations only of target group; people hired as young adults
 drop if agehire > 29
-* Leaves us with 3,550 observations
+* Leaves us with 2,852 observations
+
+
 
 * We create four groups of nepobabies to test the difference in means for differently competitive labor markets.
 * The unemployment rates we chose to be considered high and low are first and fourth quartiles of the unemployment rates over the period of time we look at from 1960-2022
 * Creating variable for nepobabies hired during high unemployment (fourth quartile)
-gen nepo_highu = (nepobaby == 1 & unemployrate >= 6.7)
+
+* Changing the quartiles to adjust for no 2022 data.
+gen nepo_highu = (nepobaby == 1 & unemployrate >= 6.8)
 * Creating variable for nepobabies hired during low unemployment (first quartile)
-gen nepo_lowu = (nepobaby == 1 & unemployrate <= 4.5)
+gen nepo_lowu = (nepobaby == 1 & unemployrate <= 4.7)
 *Creating a variable for nepobabies hired in mid-low unemployment (second quartile)
-gen nepo_midlu = (nepobaby == 1) & (unemployrate > 4.5) & (unemployrate <= 5.4)
+gen nepo_midlu = (nepobaby == 1) & (unemployrate > 4.7) & (unemployrate <= 5.5)
 * Creating a variable for nepobabies hired in mid-high unemployment (third quartile)
-gen nepo_midhu = (nepobaby == 1) & (unemployrate < 6.7) & (unemployrate > 5.4)
+gen nepo_midhu = (nepobaby == 1) & (unemployrate < 6.8) & (unemployrate > 5.5)
 
 * Making the t-test only for nepobabies, not the whole sample, so that the means are more representative of the nepobaby population
 replace nepo_highu = . if nepobaby == 0
@@ -114,17 +122,17 @@ graph export "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\e
 ** Chi square test of all groups of unemployment
 gen unemployrate_groups = .
 
-replace unemployrate_groups = 1 if unemployrate <= 4.5
+replace unemployrate_groups = 1 if unemployrate <= 4.7
 
-replace unemployrate_groups = 2 if (unemployrate > 4.5) & (unemployrate <= 5.4)
+replace unemployrate_groups = 2 if (unemployrate > 4.7) & (unemployrate <= 5.5)
 
-replace unemployrate_groups = 3 if (unemployrate > 5.4) & (unemployrate < 6.7)
+replace unemployrate_groups = 3 if (unemployrate > 5.5) & (unemployrate < 6.8)
 
-replace unemployrate_groups = 4 if unemployrate >= 6.7
+replace unemployrate_groups = 4 if unemployrate >= 6.8
 
 * Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
 tabulate nepobaby unemployrate_groups, chi2
-
+* Updated unemployrate values for no 2022 data.
 
 
 
@@ -145,20 +153,20 @@ drop if _merge == 2
 ** Chi square test of all groups of unemployment (ymhiredate of 3 months earlier)
 gen unemployrate_groups_m3 = .
 
-replace unemployrate_groups_m3 = 1 if unemployrate_m3 <= 4.5
+replace unemployrate_groups_m3 = 1 if unemployrate_m3 <= 4.7
 
-replace unemployrate_groups_m3 = 2 if (unemployrate_m3 > 4.5) & (unemployrate_m3 <= 5.4)
+replace unemployrate_groups_m3 = 2 if (unemployrate_m3 > 4.7) & (unemployrate_m3 <= 5.5)
 
-replace unemployrate_groups_m3 = 3 if (unemployrate_m3 > 5.4) & (unemployrate_m3 < 6.7)
+replace unemployrate_groups_m3 = 3 if (unemployrate_m3 > 5.5) & (unemployrate_m3 < 6.8)
 
-replace unemployrate_groups_m3 = 4 if unemployrate_m3 >= 6.7
+replace unemployrate_groups_m3 = 4 if unemployrate_m3 >= 6.8
 
 replace unemployrate_groups_m3 = . if yearsjob < 1
 
 * Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
 tabulate nepobaby unemployrate_groups_m3, chi
 * This seems to have worked! In the sense that it performed the analysis I wanted it to.
-* It gives us a p-value of 0.089, so it does not pass at the 0.95 level but does at the 0.90 level. Something to make note of in the results!
+* It gives us a p-value of 0.332
 
 
 
@@ -177,19 +185,19 @@ drop if _merge == 2
 ** Chi square test of all groups of unemployment (ymhiredate of 6 months earlier)
 gen unemployrate_groups_m6 = .
 
-replace unemployrate_groups_m6 = 1 if unemployrate_m6 <= 4.5
+replace unemployrate_groups_m6 = 1 if unemployrate_m6 <= 4.7
 
-replace unemployrate_groups_m6 = 2 if (unemployrate_m6 > 4.5) & (unemployrate_m6 <= 5.4)
+replace unemployrate_groups_m6 = 2 if (unemployrate_m6 > 4.7) & (unemployrate_m6 <= 5.5)
 
-replace unemployrate_groups_m6 = 3 if (unemployrate_m6 > 5.4) & (unemployrate_m6 < 6.7)
+replace unemployrate_groups_m6 = 3 if (unemployrate_m6 > 5.5) & (unemployrate_m6 < 6.8)
 
-replace unemployrate_groups_m6 = 4 if unemployrate_m6 >= 6.7
+replace unemployrate_groups_m6 = 4 if unemployrate_m6 >= 6.8
 
 replace unemployrate_groups_m6 = . if yearsjob < 1
 
 * Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
 tabulate nepobaby unemployrate_groups_m6, chi
-*  p-value of 0.085, so it does not pass the sensitivity analysis at the 0.95 significance level, but it does at the 0.90 significance level
+*  p-value of 0.205, so it does not pass the sensitivity analysis
 
 
 
@@ -213,19 +221,19 @@ drop if _merge == 2
 ** Chi square test of all groups of unemployment (ymhiredate of 6 months earlier)
 gen unemployrate_groups_p3 = .
 
-replace unemployrate_groups_p3 = 1 if unemployrate_p3 <= 4.5
+replace unemployrate_groups_p3 = 1 if unemployrate_p3 <= 4.7
 
-replace unemployrate_groups_p3 = 2 if (unemployrate_p3 > 4.5) & (unemployrate_p3 <= 5.4)
+replace unemployrate_groups_p3 = 2 if (unemployrate_p3 > 4.7) & (unemployrate_p3 <= 5.5)
 
-replace unemployrate_groups_p3 = 3 if (unemployrate_p3 > 5.4) & (unemployrate_p3 < 6.7)
+replace unemployrate_groups_p3 = 3 if (unemployrate_p3 > 5.5) & (unemployrate_p3 < 6.8)
 
-replace unemployrate_groups_p3 = 4 if unemployrate_p3 >= 6.7
+replace unemployrate_groups_p3 = 4 if unemployrate_p3 >= 6.8
 
 replace unemployrate_groups_p3 = . if yearsjob < 1
 
 * Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
 tabulate nepobaby unemployrate_groups_p3, chi
-* p-value of 0.187, so does not pass the sensitivity analysis :(
+* p-value of 0.532, so does not pass the sensitivity analysis :(
 
 
 
@@ -248,19 +256,19 @@ drop if _merge == 2
 ** Chi square test of all groups of unemployment (ymhiredate of 6 months earlier)
 gen unemployrate_groups_p6 = .
 
-replace unemployrate_groups_p6 = 1 if unemployrate_p6 <= 4.5
+replace unemployrate_groups_p6 = 1 if unemployrate_p6 <= 4.7
 
-replace unemployrate_groups_p6 = 2 if (unemployrate_p6 > 4.5) & (unemployrate_p6 <= 5.4)
+replace unemployrate_groups_p6 = 2 if (unemployrate_p6 > 4.7) & (unemployrate_p6 <= 5.5)
 
-replace unemployrate_groups_p6 = 3 if (unemployrate_p6 > 5.4) & (unemployrate_p6 < 6.7)
+replace unemployrate_groups_p6 = 3 if (unemployrate_p6 > 5.5) & (unemployrate_p6 < 6.8)
 
-replace unemployrate_groups_p6 = 4 if unemployrate_p6 >= 6.7
+replace unemployrate_groups_p6 = 4 if unemployrate_p6 >= 6.8
 
 replace unemployrate_groups_p6 = . if yearsjob < 1
 
 * Cross-tabulation & chi-square test of the three groups of hiring in terms of unemployment
 tabulate nepobaby unemployrate_groups_p6, chi
-* p-value of 0.0.23, so it does pass the sensitivity analysis :)
+* p-value of 0.163, so it does pass the sensitivity analysis :)
 
 
 
@@ -280,19 +288,19 @@ tabulate nepobaby unemployrate_groups_p6, chi
 
 
 * Examining the ratio of nepobabies and all people hired during times of low and high unemployment
-gen allhire_highu = (unemployrate >= 6.7)
+gen allhire_highu = (unemployrate >= 6.8)
 
 replace allhire_highu = . if nepobaby == 1
 
-gen allhire_lowu = (unemployrate <= 4.5)
+gen allhire_lowu = (unemployrate <= 4.7)
 
 replace allhire_lowu = . if nepobaby == 1
 
-gen allhire_midlu = (unemployrate > 4.5) & (unemployrate <= 5.4)
+gen allhire_midlu = (unemployrate > 4.7) & (unemployrate <= 5.5)
 
 replace allhire_midlu = . if nepobaby == 1
 
-gen allhire_midhu = (unemployrate > 5.4) & (unemployrate < 6.7)
+gen allhire_midhu = (unemployrate > 5.5) & (unemployrate < 6.8)
 
 replace allhire_midhu = . if nepobaby == 1
 
@@ -307,7 +315,7 @@ gen ratio_high = nepo_highu_1 / allhire_highu_1
 
 * To view the ratio of nepobabies hired in high unemployment to non-nepobabies hired in high unemployment
 tab ratio_high
-* With four groups the ratio is 0.1023142
+* With four groups the ratio is 0.126761
 
 
 
@@ -322,7 +330,7 @@ gen ratio_low = nepo_lowu_1 / allhire_lowu_1
 
 * To view the ratio of nepobabies hired in low unemployment to non-nepobabies hired in low unemployment
 tab ratio_low
-* Four groups ratio is now 0.0589544
+* Four groups ratio is now 0.096467
 
 
 * Calculate the number of observations where nepo_midu = 1
@@ -336,7 +344,7 @@ gen ratio_midh = nepo_midhu_1 / allhire_midhu_1
 
 * To view the ratio of nepobabies hired in "middle" unemployment to non-nepobabies hired in "middle" unemployment
 tab ratio_midh
-* Ratio is 0.1065341
+* Ratio is 0.11453
 
 
 
@@ -351,7 +359,7 @@ gen ratio_midl = nepo_midlu_1 / allhire_midlu_1
 
 * To view the ratio of nepobabies hired in "middle" unemployment to non-nepobabies hired in "middle" unemployment
 tab ratio_midl
-* Ratio is 0.0893921
+* Ratio is 0.113523
 
 
 

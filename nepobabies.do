@@ -369,6 +369,22 @@ tab ratio_midl
  graph bar (mean) ratio_high (mean) ratio_midh (mean) ratio_midl (mean) ratio_low, blabel(bar) ytitle("Ratio of Nepobabies to Non-Nepobabies") title("Nepotism Hiring in Different Labor Markets") legend(order(1 "high unemployment hire" 2 "mid-high unemployment hire" 3 "mid-low unemployment hire" 4 "low unemployment hire"))
 
 
+ 
+ 
+ * Adding in the beta regression and its graphic
+ 
+
+gen nepobaby_ratio = sum(nepobaby == 1) / sum(nepobaby == 0)
+replace nepobaby_ratio = . if nepobaby_ratio == 0
+betareg nepobaby_ratio unemployrate
+
+ 
+ 
+twoway (scatter nepobaby_ratio unemployrate) (lfit nepobaby_ratio unemployrate)
+
+ 
+ 
+ 
 * Testing to see how nepobaby rates change with gender of parent and child
 
 ** Nepobaby by FATHER

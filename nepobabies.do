@@ -70,10 +70,11 @@ replace hireyoung = 2 if (age hire <= 30)
 replace hireyoung = . if ((paind10 == .i) | (maind10 == .i))
 
 tab hireyoung nepobaby, chi2
-
-logit nepobaby hireyoung
 * Significant association
 
+logit nepobaby agehire, or
+* Significant association
+* Should probably move this to another section, or keep it at the top to say this is why we focus on young adults.
 
 * Keeping observations only of target group; people hired as young adults
 drop if agehire > 29

@@ -273,19 +273,46 @@ tabulate nepobaby unemployrate_groups_p6, chi
 
 
 
+* Working on the beta regression to make sure it is actually measuring what we want it to measure
+
+egen nepobaby_1 = total(nepobaby == 1), by(ymhiredate)
+egen nepobaby_0 = total(nepobaby == 0), by(ymhiredate)
+gen nepobaby_ratio = nepobaby_1 / nepobaby_0
 
 
 
+betareg nepobaby_ratio2 unemployrate
+
+* DOES NOT WORK
+gen logit_nepobaby_ratio = ln(nepobaby_ratio / (1 - nepobaby_ratio))
+
+* this bounds all the results between 0 and 1
+gen stabilized_nepobaby_ratio = (nepobaby_ratio * (10000000 - 1) + 0.5) / 10000000
+
+* When I run the betareg it says no observations?? Hello?
+*Trying to correct this
+
+* Define the threshold for identifying small values
+local threshold 1e-6
+
+* Replace values below the threshold with a larger but still small number
+replace stabilized_nepobaby_ratio = 1e-6 if stabilized_nepobaby_ratio < `threshold'
+
+* Define the threshold for identifying values close to 1
+local threshold_close_to_1 0.999999
+
+* Replace values close to 1 with a slightly smaller number
+replace stabilized_nepobaby_ratio = 0.999999 if stabilized_nepobaby_ratio > `threshold_close_to_1'
 
 
 
+gen logit_nepobaby_ratio = ln(stabilized_nepobaby_ratio / (1 - stabilized_nepobaby_ratio))
 
+egen nepobaby_12 = total(nepobaby == 1), by(unemployrate)
+egen nepobaby_02 = total(nepobaby == 0), by(unemployrate)
+gen nepobaby_ratio2 = nepobaby_1 / nepobaby_0
 
-
-
-
-
-
+gen stabilized_nepobaby_ratio2 = (nepobaby_ratio2 * (10000000 - 1) + 0.5) / 10000000
 
 * Examining the ratio of nepobabies and all people hired during times of low and high unemployment
 gen allhire_highu = (unemployrate >= 6.8)

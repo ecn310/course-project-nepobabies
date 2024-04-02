@@ -22,7 +22,7 @@ drop if missing(yearsjob)
 ** Dropping observations for age not recorded - cannot accurately measure agehire without age.
 drop if missing(age)
 * dropping because the 2022 survey year does not include necessary variables for defining a variable.
-drop if yearintv == 2022
+drop if year== 2022
 
 * Convert dateintv to a string for easier manipulation
 gen dateintv_str = string(dateintv)
@@ -275,13 +275,16 @@ tabulate nepobaby unemployrate_groups_p6, chi
 
 * Working on the beta regression to make sure it is actually measuring what we want it to measure
 
-egen nepobaby_1 = total(nepobaby == 1), by(ymhiredate)
-egen nepobaby_0 = total(nepobaby == 0), by(ymhiredate)
+egen nepobaby_1 = total(nepobaby == 1), by(unemployrate)
+egen nepobaby_0 = total(nepobaby == 0), by(unemployrate)
 gen nepobaby_ratio = nepobaby_1 / nepobaby_0
 
+replace nepobaby_ratio = 0.00001 if(nepobaby_ratio == 0)
+
+betareg nepobaby_ratio unemployrate
+* This is where I got a significant result
 
 
-betareg nepobaby_ratio2 unemployrate
 
 * DOES NOT WORK
 gen logit_nepobaby_ratio = ln(nepobaby_ratio / (1 - nepobaby_ratio))

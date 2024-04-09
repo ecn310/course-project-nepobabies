@@ -86,38 +86,6 @@ drop if agehire > 29
 
 
 
-* We create four groups of nepobabies to test the difference in means for differently competitive labor markets.
-* The unemployment rates we chose to be considered high and low are first and fourth quartiles of the unemployment rates over the period of time we look at from 1960-2022
-* Creating variable for nepobabies hired during high unemployment (fourth quartile)
-
-* Changing the quartiles to adjust for no 2022 data.
-gen nepo_highu = (nepobaby == 1 & unemployrate >= 6.8)
-* Creating variable for nepobabies hired during low unemployment (first quartile)
-gen nepo_lowu = (nepobaby == 1 & unemployrate <= 4.7)
-*Creating a variable for nepobabies hired in mid-low unemployment (second quartile)
-gen nepo_midlu = (nepobaby == 1) & (unemployrate > 4.7) & (unemployrate <= 5.5)
-* Creating a variable for nepobabies hired in mid-high unemployment (third quartile)
-gen nepo_midhu = (nepobaby == 1) & (unemployrate < 6.8) & (unemployrate > 5.5)
-
-* Making the t-test only for nepobabies, not the whole sample, so that the means are more representative of the nepobaby population
-replace nepo_highu = . if nepobaby == 0
-replace nepo_lowu = . if nepobaby == 0
-replace nepo_midhu = . if nepobaby == 0
-replace nepo_midlu = . if nepobaby == 0
-
-* Testing the difference of means between the two 
-ttest nepo_highu == nepo_lowu
-
-ttest nepo_highu == nepo_midhu
-
-ttest nepo_midhu == nepo_midlu
-
-* Visual of the difference in means
-graph bar (mean) nepo_highu (mean) nepo_midhu (mean) nepo_midlu (mean) nepo_lowu, title(`"Nepobabies in High vs. Low Unemployment"')
-
-graph export "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\nepobabies_percentile_categories.png", as(png) name("Graph")
-
-
 
 ** Chi square test of all groups of unemployment
 gen unemployrate_groups = .
@@ -278,8 +246,7 @@ tabulate nepobaby unemployrate_groups_p6, chi
 
 
 
-* Working on the beta regression to make sure it is actually measuring what we want it to measure
-
+* correlation
 egen nepobaby_1 = total(nepobaby == 1), by(unemployrate)
 egen nepobaby_0 = total(nepobaby == 0 | nepobaby == 1), by(unemployrate)
 gen nepobaby_ratio = nepobaby_1 / nepobaby_0
@@ -292,12 +259,19 @@ pwcorr nepobaby_ratio unemployrate, sig
 scatter nepobaby_ratio unemployrate || lfit nepobaby_ratio unemployrate
 
 
-* Bounding the ratio between 0 and 1 for purposes of a regression of a ratio.
-replace nepobaby_ratio = 0.000001 if(nepobaby_ratio == 0)
+// Fit logistic regression
+logistic nepobaby unemployrate
+* p-value = 0.408
 
-betareg nepobaby_ratio unemployrate
-* This is where I got NO significant result
-* Finally something makes sense
+// Generate predicted probabilities
+predict p, pr
+
+// Scatter plot with linear regression line and no individual data points
+twoway (scatter nepobaby unemployrate, msymbol(none)) ///
+       (line p unemployrate, lcolor(blue) lwidth(medium)), ///
+       xtitle(Unemployment Rate) ytitle(Probability of Having a Baby) ///
+       legend(off) ///
+       yscale(range(0 0.3))
 
 
 

@@ -261,7 +261,7 @@ gen nepobaby_ratio = nepobaby_1 / nepobaby_0
 
 * Correlation between nepobaby : allworkers ratio and the unemployment rate
 pwcorr nepobaby_ratio unemployrate, sig
-* weak but significant relationship (0.0992 correlation)
+* weak but significant relationship (0.0979 correlation)
 *Showing the realtionship graphically
 scatter nepobaby_ratio unemployrate || lfit nepobaby_ratio unemployrate
 
@@ -288,6 +288,29 @@ twoway (scatter nepobaby unemployrate, msymbol(none)) ///
 
 
 * Examining the ratio of nepobabies and all people hired during times of low and high unemployment
+
+* setting up group sizes given unemployment rates
+gen nepo_lowu = .
+replace nepo_lowu = 1 if unemployrate <= 4.7 & nepobaby == 1
+replace nepo_lowu = 0 if unemployrate <= 4.7 & nepobaby == 0
+
+
+gen nepo_midlu = .
+replace nepo_midlu = 1 if (unemployrate > 4.7) & (unemployrate <= 5.5) & nepobaby == 1
+replace nepo_midlu = 0 if (unemployrate > 4.7) & (unemployrate <= 5.5) & nepobaby == 0
+
+gen nepo_midhu = .
+replace nepo_midhu = 1 if (unemployrate > 5.5) & (unemployrate < 6.8) & nepobaby == 1
+replace nepo_midhu = 0 if (unemployrate > 5.5) & (unemployrate < 6.8) & nepobaby == 0
+
+gen nepo_highu = .
+replace nepo_highu = 1 if unemployrate >= 6.8 & nepobaby == 1
+replace nepo_highu = 0 if unemployrate >= 6.8 & nepobaby == 0
+
+
+
+
+* High unemployment
 gen allhire_highu = (unemployrate >= 6.8)
 
 replace allhire_highu = . if nepobaby == 1

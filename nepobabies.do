@@ -486,72 +486,29 @@ graph bar (mean) malenepoma (mean) femalenepoma,  title(`"Male vs. Female Nepoba
 
 * Looking at the demographics of nepobabies in high unemployment
 
+
+
 * RACE
-* Creating variable for white nepobabies (white is equal to 1)
-gen nepo_white = (nepobaby == 1 & race == 1)
-
-* Labeling irrelevant data as missing to avoid noise/confusion
-replace nepo_white = . if nepobaby == 0
-
-* Creating a variable for the proportion of white people surveyed
-gen sample_white = (race == 1)
-
-* Comparing the means of white people in the whole sample vs. white nepobabies
-ttest sample_white == nepo_white, unpaired
-
-graph bar (mean) sample_white (mean) nepo_white, title(`"Race for Nepobabies vs Sample"')
-
-
-
-* Creating a chi-square test for nepobaby race vs. sample race
 tab nepobaby race, chi2
-* This yields an insignificant result
-
-
+* p-value = 0.210 so this yields an insignificant result
 
 
 
 * GENDER
-* Creating variable for male nepobabies
-gen nepo_male = (nepobaby == 1 & sex == 1)
-
-* Labeling irrelevant data as missing to avoid noise/confusion
-replace nepo_male = . if nepobaby == 0
-
-* Creating a variable for the sample of males surveyed
-gen sample_male = (sex == 1)
-
-* Preventing male nepobabies from being counted in the sample group
-sample_male = . if nepobaby == 0
-
-* Comparing the means of males in the whole sample vs. male nepobabies
-ttest sample_male == nepo_male, unpaired
-
-graph bar (mean) sample_male (mean) nepo_male
-
-
-
-**Creating a chi-square test for nepobaby and gender
 tab nepobaby sex, chi2
-* This test yields an insignificant result
+* p-value = 0.124, so no strong association
+
+
 
 * CLASS (self-reported)
-* Creating variable for middle and upper class nepobabies
-gen nepo_midup = (nepobaby == 1 & class >= 3)
-
-* Labeling irrelevant data as missing to avoid noise/confusion
-replace nepo_midup = . if nepobaby == 0
-
-* Creating a variable for the sample of middle and upper class people surveyed
-gen sample_midup = (class >= 3)
-
-* Comparing the means of middle/upper class people in the whole sample vs. middle/upper class nepobabies
-ttest sample_midup == nepo_midup, unpaired
 
 
 * Creating a chi-square test for nepobaby and class
 tab nepobaby class, chi2
 * This yields an insignifcant result
+
+
+
 
 * EDUCATION (college educated)
 * Creating variable for college educated nepobabies
@@ -565,6 +522,7 @@ gen sample_educ = (educ >= 16)
 
 * Comparing the means of college educating people in the whole sample vs. college educated nepobabies
 ttest sample_educ == nepo_educ, unpaired
+* p-value = 0.0917 that nepobabies are more likely to be college education than non-nepobabies - should definitely recheck this
 
 * EDUCATION (less than high school)
 
@@ -575,10 +533,11 @@ replace nepo_educl = . if nepobaby == 0
 gen sample_educl = (educ < 12)
 
 ttest sample_educl == nepo_educl, unpaired
-
+* p-value = 0.3789, so no significant association
 
 * Creating a chi-square test for nepobaby and education
 tab nepobaby educ, chi2
+
 
 
 * HOURS WORKED WEEKLY (self-reported)

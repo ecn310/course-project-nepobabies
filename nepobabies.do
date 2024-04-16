@@ -563,8 +563,7 @@ gen sample_hrslow = (hrs1 < 30)
 ttest sample_hrslow == nepo_hrslow, unpaired
 
 * Creating a chi-square test for nepobaby and weekly hours worked
-tab nepobaby hrs1, chi2
-* I actually think that the t-test was the right call for this, except that it was done incorrectly. But the t-test is correct because nepobaby is categorical and hrs worked is quantitative
+
 
 * New t-test for hours worked
 

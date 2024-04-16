@@ -287,45 +287,6 @@ twoway (scatter nepobaby unemployrate, msymbol(none)) ///
 
 
 
-
-
-
-* Considering making naturally occuring groups 
-
-* Shows normal and kernel density distributions for the unemployrate variables
- kdensity unemployrate, normal
- 
-* Standardize the variable
-egen unemployrate_mean = mean(unemployrate)
-egen unemployrate_sd = sd(unemployrate)
-gen unemployrate_scaled = (unemployrate - unemployrate_mean) / unemployrate_sd
-
-
-kdensity unemployrate_scaled, normal
-
-
-* Determine the optimal number of clusters (k)
-* For example, using the elbow method
-cluster kmeans unemployrate_scaled, k(4) standard nrep(10) iterate(100) method(kmeans++) saving(results, replace)
-
-* Analyze the clustering results
-cluster summarize
-
-* Assign observations to clusters
-predict clusterid
-
-* Analyze the relationship between clusters and nepobaby variable
-tabulate nepobaby clusterid, chi2
-
-
-
-
-
-
-
-
-
-
 * Examining the ratio of nepobabies and all people hired during times of low and high unemployment
 gen allhire_highu = (unemployrate >= 6.8)
 

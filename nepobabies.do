@@ -108,6 +108,7 @@ tabulate nepobaby unemployrate_groups, chi2
 
 
 * SA FOR MINUS 3
+drop ymhiredate_m3
 gen ymhiredate_m3 = ymhiredate
 
 drop _merge
@@ -140,6 +141,8 @@ tabulate nepobaby unemployrate_groups_m3, chi
 
 
 * SA FOR MINUS 6
+drop ymhiredate_m6
+
 gen ymhiredate_m6 = ymhiredate
 
 drop _merge
@@ -176,6 +179,8 @@ tabulate nepobaby unemployrate_groups_m6, chi
 
 
 * SA FOR PLUS 3
+drop ymhiredate_p3
+
 gen ymhiredate_p3 = ymhiredate
 
 drop _merge
@@ -211,6 +216,8 @@ tabulate nepobaby unemployrate_groups_p3, chi
 
 
 * SA FOR PLUS 6
+drop ymhiredate_p6
+
 gen ymhiredate_p6 = ymhiredate
 
 drop _merge

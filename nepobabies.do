@@ -263,7 +263,8 @@ gen nepobaby_ratio = nepobaby_1 / nepobaby_0
 pwcorr nepobaby_ratio unemployrate, sig
 * weak but significant relationship (0.0979 correlation)
 *Showing the realtionship graphically
-scatter nepobaby_ratio unemployrate || lfit nepobaby_ratio unemployrate
+twoway (scatter nepobaby_ratio unemployrate), ytitle(Nepotism Ratio) xtitle(Unemplo
+> yment Rate), (lfit nepobaby_ratio unemployrate)
 
 
 // Fit logistic regression
@@ -389,7 +390,7 @@ tab ratio_midl
 
 
 *To graphically view the relationships of all the ratios
- graph bar (mean) ratio_high (mean) ratio_midh (mean) ratio_midl (mean) ratio_low, blabel(bar) ytitle("Ratio of Nepobabies to Non-Nepobabies") title("Nepotism Hiring in Different Labor Markets") legend(order(1 "high unemployment hire" 2 "mid-high unemployment hire" 3 "mid-low unemployment hire" 4 "low unemployment hire"))
+ graph bar (mean) ratio_high (mean) ratio_midh (mean) ratio_midl (mean) ratio_low, blabel(bar) ytitle("Nepobaby Ratio") title("Nepotism Hiring in Different Labor Markets") legend(order(1 "high unemployment" 2 "mid-high unemployment" 3 "mid-low unemployment" 4 "low unemployment"))
 
 
 

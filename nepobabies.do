@@ -313,19 +313,11 @@ replace nepo_highu = 0 if unemployrate >= 6.8 & nepobaby == 0
 * High unemployment
 gen allhire_highu = (unemployrate >= 6.8)
 
-replace allhire_highu = . if nepobaby == 1
-
 gen allhire_lowu = (unemployrate <= 4.7)
-
-replace allhire_lowu = . if nepobaby == 1
 
 gen allhire_midlu = (unemployrate > 4.7) & (unemployrate <= 5.5)
 
-replace allhire_midlu = . if nepobaby == 1
-
 gen allhire_midhu = (unemployrate > 5.5) & (unemployrate < 6.8)
-
-replace allhire_midhu = . if nepobaby == 1
 
 * Calculate the number of observations where nepo_highu = 1
 egen nepo_highu_1 = total(nepo_highu == 1)
@@ -336,9 +328,9 @@ egen allhire_highu_1 = total(allhire_highu == 1)
 * Calculate the ratio
 gen ratio_high = nepo_highu_1 / allhire_highu_1
 
-* To view the ratio of nepobabies hired in high unemployment to non-nepobabies hired in high unemployment
+* To view the ratio of nepobabies hired in high unemployment to all workers hired in high unemployment
 tab ratio_high
-* With four groups the ratio is 0.126761
+* With four groups the ratio is 0.1125
 
 
 
@@ -351,9 +343,9 @@ egen allhire_lowu_1 = total(allhire_lowu == 1)
 * Calculate the ratio
 gen ratio_low = nepo_lowu_1 / allhire_lowu_1
 
-* To view the ratio of nepobabies hired in low unemployment to non-nepobabies hired in low unemployment
+* To view the ratio of nepobabies hired in low unemployment to all workers hired in low unemployment
 tab ratio_low
-* Four groups ratio is now 0.096467
+* Four groups ratio is now 0.0879802
 
 
 * Calculate the number of observations where nepo_midu = 1
@@ -365,9 +357,9 @@ egen allhire_midhu_1 = total(allhire_midhu == 1)
 * Calculate the ratio
 gen ratio_midh = nepo_midhu_1 / allhire_midhu_1
 
-* To view the ratio of nepobabies hired in "middle" unemployment to non-nepobabies hired in "middle" unemployment
+* To view the ratio of nepobabies hired in "middle-high" unemployment to all workers hired in "middle-high" unemployment
 tab ratio_midh
-* Ratio is 0.11453
+* Ratio is 0.1027607
 
 
 
@@ -380,9 +372,9 @@ egen allhire_midlu_1 = total(allhire_midlu == 1)
 * Calculate the ratio
 gen ratio_midl = nepo_midlu_1 / allhire_midlu_1
 
-* To view the ratio of nepobabies hired in "middle" unemployment to non-nepobabies hired in "middle" unemployment
+* To view the ratio of nepobabies hired in "middle-low" unemployment to all workers hired in "middle-low" unemployment
 tab ratio_midl
-* Ratio is 0.113523
+* Ratio is 0.101949
 
 
 

@@ -529,6 +529,19 @@ ttest sample_educl == nepo_educl, unpaired
 
 * Creating a chi-square test for nepobaby and education
 tab nepobaby educ, chi2
+* p = 0.099. I did the following t-test to see if it was worth examining further, and given the insignificant result of the t-test I do not believe it is worth including as a significant result in the paper.
+
+* Creating a two-sample t-test for average education of nepobabies and non-nepobabies
+
+gen educ_notnepo = educ
+replace educ_notnepo = . if nepobaby == 1
+
+gen educ_nepo = educ
+replace educ_nepo = . if nepobaby == 0
+
+ttest educ_nepo == educ_notnepo, unpaired
+* insignificant result
+
 
 
 

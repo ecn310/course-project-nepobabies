@@ -265,8 +265,7 @@ pwcorr nepobaby_ratio unemployrate, sig
 *Showing the realtionship graphically
 twoway (scatter nepobaby_ratio unemployrate, legend(label(1 "Ratio of Nepobabies to All Workers"))) ///
        (lfit nepobaby_ratio unemployrate, legend(label(2 "Fit Line"))), ///
-       ytitle("Nepotism Ratio") xtitle("Unemployment Rate") ///
-       title("Nepotism Ratio vs. Unemployment Rate")
+       ytitle("Nepotism Ratio") xtitle("Unemployment Rate") 
 	   
 	   
 // Fit logistic regression
@@ -384,7 +383,7 @@ tab ratio_midl
 
 
 *To graphically view the relationships of all the ratios
- graph bar (mean) ratio_high (mean) ratio_midh (mean) ratio_midl (mean) ratio_low, blabel(bar) ytitle("Nepobaby Ratio") title("Nepotism Hiring in Different Labor Markets") legend(order(1 "high unemployment" 2 "mid-high unemployment" 3 "mid-low unemployment" 4 "low unemployment"))
+ graph bar (mean) ratio_high (mean) ratio_midh (mean) ratio_midl (mean) ratio_low, blabel(bar) ytitle("Nepobaby Ratio") legend(order(1 "high unemployment" 2 "mid-high unemployment" 3 "mid-low unemployment" 4 "low unemployment"))
 
 
 
@@ -453,7 +452,6 @@ replace nepoparentsex_label = "Nepotistic Mother" if nepoparentsex == 2
 
 graph bar (count) nepomale nepofemale, over(nepoparentsex_label) ///
     stack ///
-    title("Proportion of Male and Female Nepobabies by Nepotistic Parent Sex", size(medsmall)) ///
     legend(label(1 "Male Nepobabies") label(2 "Female Nepobabies")) ///
 	ytitle("Nepobaby Count")
 

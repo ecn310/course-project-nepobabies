@@ -263,9 +263,12 @@ gen nepobaby_ratio = nepobaby_1 / nepobaby_0
 pwcorr nepobaby_ratio unemployrate, sig
 * weak but significant relationship (0.0979 correlation)
 *Showing the realtionship graphically
-twoway (scatter nepobaby_ratio unemployrate), ytitle(Nepotism Ratio) xtitle(Unemployment Rate), (lfit nepobaby_ratio unemployrate)
-
-
+twoway (scatter nepobaby_ratio unemployrate, legend(label(1 "Ratio of Nepobabies to All Workers"))) ///
+       (lfit nepobaby_ratio unemployrate, legend(label(2 "Fit Line"))), ///
+       ytitle("Nepotism Ratio") xtitle("Unemployment Rate") ///
+       title("Nepotism Ratio vs. Unemployment Rate")
+	   
+	   
 // Fit logistic regression
 logistic nepobaby unemployrate
 * p-value = 0.408

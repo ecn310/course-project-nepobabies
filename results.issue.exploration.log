@@ -1,0 +1,221 @@
+----------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\results.is
+> sue.exploration.log
+  log type:  text
+ opened on:  20 Mar 2024, 00:36:58
+
+. gen nepobaby_ratio = sum(nepobaby == 1) / sum(nepobaby == 0)
+
+. twoway scatter nepobaby_ratio unemployrate
+
+. graph save "Graph" "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\twoway.full
+> urate.neporatio.gph"
+(file C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\twoway.fullurate.neporatio.
+> gph saved)
+
+. gen urate_no22 = .
+(3,550 missing values generated)
+
+. replace urate_no22 = unemployrate
+(3,550 real changes made)
+
+. replace urate_no22 = . if yearintv == 2022
+(698 real changes made, 698 to missing)
+
+. twoway scatter nepobaby_ratio urate_no22
+
+. graph save "Graph" "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\twoway.urat
+> eno22.neporatio.gph"
+(file C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\twoway.urateno22.neporatio.
+> gph saved)
+
+. graph save "Graph" "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\twoway.full
+> urate.neporatio.png"
+(file C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\course-project-nepobabies\twoway.fullurate.neporatio.
+> png saved)
+
+.  twoway scatter nepobaby_ratio urate_no22
+
+. 
+. 
+. graph export "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\.github
+> \twoway.urateno22.neporatio.png", as(png) name("Graph")
+(file C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\.github\twoway.ur
+> ateno22.neporatio.png written in PNG format)
+
+. twoway scatter nepobaby_ratio unemployrate
+
+. graph export "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\.github
+> \twoway.fullurate.neporatio.png", as(png) name("Graph")
+(file C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\.github\twoway.fu
+> llurate.neporatio.png written in PNG format)
+
+. * USing chatGPT i got the idea for some kind of regression with the dependent variable as a ratio, so a beta regression.
+
+. betareg nepobaby_ratio urate_no22
+nepobaby_ratio must be greater than zero and less than one
+r(459);
+
+. sum nepobaby_ratio
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+nepobaby_r~o |      3,550    .1113093    .0162961          0   .1435897
+
+. sum nepobaby_ratio, detail
+
+                       nepobaby_ratio
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      .030303              0
+ 5%     .0905363              0
+10%      .095587              0       Obs               3,550
+25%     .1044838              0       Sum of Wgt.       3,550
+
+50%     .1121906                      Mean           .1113093
+                        Largest       Std. Dev.      .0162961
+75%      .121327        .142132
+90%     .1271904       .1428571       Variance       .0002656
+95%     .1294498       .1428571       Skewness      -3.083021
+99%     .1329305       .1435897       Kurtosis        20.6133
+
+. betareg nepobaby_ratio unemployrate
+nepobaby_ratio must be greater than zero and less than one
+r(459);
+
+. ssc install betareg
+ssc install: "betareg" not found at SSC, type search betareg
+(To find all packages at SSC that start with b, type ssc describe b)
+r(601);
+
+. search betareg
+
+. help betareg
+
+. count if missing(nepobaby_ratio)
+  0
+
+. histogram nepobaby_ratio
+(bin=35, start=0, width=.00410256)
+
+. betareg nepobaby_ratio urate_no22
+nepobaby_ratio must be greater than zero and less than one
+r(459);
+
+. summarize nepobaby_ratio, detail
+
+                       nepobaby_ratio
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      .030303              0
+ 5%     .0905363              0
+10%      .095587              0       Obs               3,550
+25%     .1044838              0       Sum of Wgt.       3,550
+
+50%     .1121906                      Mean           .1113093
+                        Largest       Std. Dev.      .0162961
+75%      .121327        .142132
+90%     .1271904       .1428571       Variance       .0002656
+95%     .1294498       .1428571       Skewness      -3.083021
+99%     .1329305       .1435897       Kurtosis        20.6133
+
+. replace nepobaby_ratio = . if nepobaby_ratio == o
+o ambiguous abbreviation
+r(111);
+
+. replace nepobaby_ratio = . if nepobaby_ratio == 0
+(28 real changes made, 28 to missing)
+
+. betareg nepobaby_ratio urate_no22
+initial:       log likelihood =  8057.0081
+rescale:       log likelihood =  8057.0081
+rescale eq:    log likelihood =  8057.0081
+(setting technique to bhhh)
+Iteration 0:   log likelihood =  8057.0081  
+Iteration 1:   log likelihood =  8067.7388  
+Iteration 2:   log likelihood =  8072.0608  
+Iteration 3:   log likelihood =  8076.8989  
+Iteration 4:   log likelihood =  8080.0995  
+Iteration 5:   log likelihood =  8083.5587  
+Iteration 6:   log likelihood =   8086.138  
+Iteration 7:   log likelihood =  8088.8509  
+Iteration 8:   log likelihood =  8090.9551  
+Iteration 9:   log likelihood =  8093.1545  
+(switching technique to nr)
+Iteration 10:  log likelihood =  8094.8515  
+Iteration 11:  log likelihood =  8114.6689  
+Iteration 12:  log likelihood =  8114.6968  
+Iteration 13:  log likelihood =  8114.6968  
+
+Beta regression                                 Number of obs     =      2,826
+                                                LR chi2(1)        =       0.61
+                                                Prob > chi2       =     0.4343
+
+Link function  :  g(u) = log(u/(1-u))           [Logit]
+Slink function :  g(u) = log(u)                 [Log]
+
+Log likelihood =  8114.6968
+
+--------------------------------------------------------------------------------
+nepobaby_ratio |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+nepobaby_ratio |
+    urate_no22 |   .0012444   .0015907     0.78   0.434    -.0018732     .004362
+         _cons |  -2.050557   .0096684  -212.09   0.000    -2.069506   -2.031607
+---------------+----------------------------------------------------------------
+scale          |
+         _cons |   6.284587   .0266026   236.24   0.000     6.232447    6.336727
+--------------------------------------------------------------------------------
+
+.  betareg nepobaby_ratio unemployrate
+initial:       log likelihood =  9991.3616
+rescale:       log likelihood =  9991.3616
+rescale eq:    log likelihood =  9991.3616
+(setting technique to bhhh)
+Iteration 0:   log likelihood =  9991.3616  
+Iteration 1:   log likelihood =  10004.974  
+Iteration 2:   log likelihood =  10008.285  
+Iteration 3:   log likelihood =  10010.983  
+Iteration 4:   log likelihood =  10013.042  
+Iteration 5:   log likelihood =  10014.725  
+Iteration 6:   log likelihood =  10016.104  
+Iteration 7:   log likelihood =  10017.279  
+Iteration 8:   log likelihood =  10018.065  
+Iteration 9:   log likelihood =  10018.784  
+(switching technique to nr)
+Iteration 10:  log likelihood =  10019.235  
+Iteration 11:  log likelihood =  10020.867  
+Iteration 12:  log likelihood =  10020.868  
+
+Beta regression                                 Number of obs     =      3,522
+                                                LR chi2(1)        =      53.08
+                                                Prob > chi2       =     0.0000
+
+Link function  :  g(u) = log(u/(1-u))           [Logit]
+Slink function :  g(u) = log(u)                 [Log]
+
+Log likelihood =  10020.868
+
+--------------------------------------------------------------------------------
+nepobaby_ratio |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+nepobaby_ratio |
+  unemployrate |   .0102391   .0013942     7.34   0.000     .0075066    .0129717
+         _cons |  -2.127797   .0084046  -253.17   0.000    -2.144269   -2.111324
+---------------+----------------------------------------------------------------
+scale          |
+         _cons |   6.211361   .0238303   260.65   0.000     6.164654    6.258067
+--------------------------------------------------------------------------------
+
+. twoway (scatter nepobaby_ratio unemployrate) (lfit nepobaby_ratio unemployrate)
+
+. twoway (scatter nepobaby_ratio urate_no22) (lfit nepobaby_ratio urate_no22)
+
+. log close
+      name:  <unnamed>
+       log:  C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\results.is
+> sue.exploration.log
+  log type:  text
+ closed on:  20 Mar 2024, 00:37:17
+----------------------------------------------------------------------------------------------------------------------------

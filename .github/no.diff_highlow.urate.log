@@ -5,6 +5,55 @@
   log type:  text
  opened on:   2 Jun 2024, 22:33:20
 
+. gen urate_groups_difflow = .
+(2,846 missing values generated)
+
+. replace urate_groups_difflow = 1 if unemployrate > 4.7
+(2,039 real changes made)
+
+
+. replace urate_groups_difflow = 2 if unemployrate <= 4.7
+(807 real changes made)
+
+
+
+.  tabulate nepobaby urate_groups_difflow, chi2
+
+           | urate_groups_difflow
+  nepobaby |         1          2 |     Total
+-----------+----------------------+----------
+         0 |     1,823        736 |     2,559 
+         1 |       216         71 |       287 
+-----------+----------------------+----------
+     Total |     2,039        807 |     2,846 
+
+          Pearson chi2(1) =   2.0554   Pr = 0.152
+
+. gen urate_groups_difflowhigh = .
+(2,846 missing values generated)
+
+. replace urate_groups_difflowhigh = 1 if unemployrate >= 6.8
+(720 real changes made)
+
+. 
+. replace urate_groups_difflowhigh = 2 if unemployrate <= 4.7
+(807 real changes made)
+
+. tabulate nepobaby urate_groups_difflowhigh, chi2
+
+           | urate_groups_difflowh
+           |          igh
+  nepobaby |         1          2 |     Total
+-----------+----------------------+----------
+         0 |       639        736 |     1,375 
+         1 |        81         71 |       152 
+-----------+----------------------+----------
+     Total |       720        807 |     1,527 
+
+          Pearson chi2(1) =   2.5523   Pr = 0.110
+. 
+
+
 . log close
       name:  <unnamed>
        log:  C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercis

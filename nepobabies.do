@@ -435,24 +435,25 @@ tab neposex nepoparentsex, chi2
 * Creating bar graph to visualize the t-test
 graph bar (mean) malenepopa (mean) femalenepopa, title(`"Male vs. Female Nepobabies - Father"')
 
-* Creating a better bar graphically
-gen nepomale = 1 if sex == 1
-replace nepomale = . if nepobaby == 0
-replace nepomale = . if (paind10 == maind10)
-gen nepofemale = 1 if sex == 2
-replace nepofemale = . if nepobaby == 0
-replace nepofemale = . if (paind10 == maind10)
-tab nepomale
-tab nepofemale
 
-gen nepoparentsex_label = ""
-replace nepoparentsex_label = "Nepotistic Father" if nepoparentsex == 1
-replace nepoparentsex_label = "Nepotistic Mother" if nepoparentsex == 2
+* Creating a better bar graph
+gen nepodad = 1 if indus10 == paind10
+replace nepodad = . if nepobaby == 0
+replace nepodad = . if (paind10 == maind10)
+gen nepomom = 1 if indus10 == maind10
+replace nepomom = . if nepobaby == 0
+replace nepomom = . if (paind10 == maind10)
+tab nepodad
+tab nepomom
+
+gen neposex_label = ""
+replace neposex_label = "Male Nepobaby" if sex == 1
+replace neposex_label = "Female Nepobaby" if sex == 2
 
 
-graph bar (count) nepomale nepofemale, over(nepoparentsex_label) ///
+graph bar (count) nepodad nepomom, over(neposex_label) ///
     stack ///
-    legend(label(1 "Male Nepobabies") label(2 "Female Nepobabies")) ///
+    legend(label(1 "Nepotistic Father") label(2 "Nepotistic Mother")) ///
 	ytitle("Nepobaby Count")
 
 

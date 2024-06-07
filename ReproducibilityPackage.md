@@ -1,17 +1,13 @@
 ## Nepobabies Reproducibility Package
-#### Steps Taken to Produce Nepobaby Results
+### Steps Taken to Produce Nepobaby Results
 
-1. In our [OneDrive folder]([url](https://sumailsyr-my.sharepoint.com/personal/rhrabino_syr_edu/_layouts/15/onedrive.aspx?ct=1696616219053&or=OWA%2DNT&cid=87642c6f%2D751b%2Dbfc3%2D8c20%2D489c586e0930&fromShare=true&ga=1&id=%2Fpersonal%2Frhrabino%5Fsyr%5Fedu%2FDocuments%2FECN%20310%20Project)), one can find the original dataset given to us by Professor Zhu containing the 1972-2022 General Social Survey dataset. The title of the file containing the dataset is "gss7222_r1.dta"
-Using the following lines of code, we kept only the variables we were interested in looking at, allowing us to reduce the size of the file and the number of irrelevant variables:
 
-keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
-jobkeep jobhonor jobinter fndjob2 thisjob7 wrkwell paind16 paind10 paind80 ///
-maind80 maind10 indus10 major1 major2 voedcol voedncol colmajr1 colmajr2 ///
-joblose yearsjob covemply race parborn granborn wealth opwlth income72 ///
-income77 income82 income86 income91 income98 income06 income16 coninc realinc ///
-povline incdef wlthpov progtax oprich inequal3 taxrich taxshare contrich ///
-class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
-skiltest wojobyrs occmobil lastslf gdjobsec thisjob2 ///
+#### Accessing General Social Survey Dataset
+1. In our [OneDrive folder](https://sumailsyr-my.sharepoint.com/personal/rhrabino_syr_edu/_layouts/15/onedrive.aspx?ct=1696616219053&or=OWA%2DNT&cid=87642c6f%2D751b%2Dbfc3%2D8c20%2D489c586e0930&fromShare=true&ga=1&id=%2Fpersonal%2Frhrabino%5Fsyr%5Fedu%2FDocuments%2FECN%20310%20Project), one can find the original dataset given to us by Professor Zhu containing the 1972-2022 General Social Survey dataset. The title of the file containing the dataset is "gss7222_r1.dta"
+
+2. After downloading the gss7222_r1.dta file, we use the following lines of code to keep only the variables we were interested in looking at, allowing us to reduce the size of the file and the number of irrelevant variables. Use the [gss.cleaner do file](https://github.com/ecn310/course-project-nepobabies/blob/09b46a21a084770fb3a5cbc176bfefd2eb4eec00/.github/gss.cleaner) to only keep the necessary variables.
+
+
 
 It is important to note that we did not use all of those variables for varying reasons, mostly that observations were not taken during any or most of our survey years.
 

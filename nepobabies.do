@@ -1,5 +1,5 @@
 * Direct file path
-cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies"
+cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data"
 
 * Direct Stata to use the cleaned GSS dataset
 use "GSSclean_noRDs"
@@ -49,7 +49,7 @@ gen ymhiredate = ymintdate - (yearsjob * 12)
 sort ymhiredate
 
 * Merging FRED unemployment rate based on ymhiredate variable
-merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\FRED_unrate_60to22_robust.dta"
+merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data"
 **** THIS NEEDS TO BE FIXED, LIKE ALTER THE DATASET SO THAT IT IS JUST ymhiredate AND DOES NOT INCLUDE ymhiredate_m3, etc.
 
 * dropping the few observations that failed to merge data

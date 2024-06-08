@@ -1,0 +1,20 @@
+* Download the gss7222_r1.dta dataset from the OneDrive folder onto local machine. 
+
+* Set file path so that the dataset can be accessed.
+
+
+* Load the dataset into Stata
+use "gss7222_r1"
+
+* Remove uneccesary variables
+keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
+jobkeep jobhonor jobinter fndjob2 thisjob7 wrkwell paind16 paind10 paind80 ///
+maind80 maind10 indus10 major1 major2 voedcol voedncol colmajr1 colmajr2 ///
+joblose yearsjob covemply race parborn granborn wealth opwlth income72 ///
+income77 income82 income86 income91 income98 income06 income16 coninc realinc ///
+povline incdef wlthpov progtax oprich inequal3 taxrich taxshare contrich ///
+class class1 hrs1 hrs2 jobhour hrswork workhr sethours sex intltest ///
+skiltest wojobyrs occmobil lastslf gdjobsec thisjob2 ///
+
+* Save the new dataset with the appropriate file path.
+save "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies"

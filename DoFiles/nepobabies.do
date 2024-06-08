@@ -496,5 +496,14 @@ tab nepobaby joblose, chi2
 * This yielded a significant result with a p-value of 0.042
 
 * Creating bar graph to represent this test
+* Setting up variables to be used in bar graph
+gen nepo_safe = (nepobaby == 1 & joblose == 4)
+
+replace nepo_safe = . if nepobaby == 0
+replace nepo_safe = . if missing(joblose)
+
+gen sample_safe = (joblose == 4)
+replace sample_safe = . if missing(joblose)
+
 graph bar (mean) sample_safe (mean) nepo_safe, title(`"Job Safety for Nepobabies and Sample"')
 

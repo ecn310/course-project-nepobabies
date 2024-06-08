@@ -113,7 +113,7 @@ gen ymhiredate_m3 = ymhiredate
 
 drop _merge
 
-merge m:m ymhiredate_m3 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\minus3.dta"
+merge m:m ymhiredate_m3 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\minus3.dta"
 
 drop if _merge == 1
 drop if _merge == 2
@@ -147,7 +147,7 @@ gen ymhiredate_m6 = ymhiredate
 
 drop _merge
 
-merge m:m ymhiredate_m6 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\minus6.dta"
+merge m:m ymhiredate_m6 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\minus6.dta"
 
 drop if _merge == 1
 drop if _merge == 2
@@ -185,7 +185,7 @@ gen ymhiredate_p3 = ymhiredate
 
 drop _merge
 
-merge m:m ymhiredate_p3 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\plus3.dta"
+merge m:m ymhiredate_p3 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\plus3.dta"
 
 drop if _merge == 1
 drop if _merge == 2
@@ -222,7 +222,7 @@ gen ymhiredate_p6 = ymhiredate
 
 drop _merge
 
-merge m:m ymhiredate_p6 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\plus6.dta"
+merge m:m ymhiredate_p6 using "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\plus6.dta"
 
 drop if _merge == 1
 drop if _merge == 2

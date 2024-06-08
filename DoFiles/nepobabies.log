@@ -1,0 +1,1173 @@
+-------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercis
+> es\course-project-nepobabies\DoFiles\nepobabies.log
+  log type:  text
+ opened on:   8 Jun 2024, 02:21:54
+
+. do "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\cour
+> se-project-nepobabies\DoFiles\nepobabies.do"
+
+. * Direct file path
+. cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\cour
+> se-project-nepobabies\Data\Last.Step.Data"
+C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-pro
+> ject-nepobabies\Data\Last.Step.Data
+
+. 
+. * Direct Stata to use the cleaned GSS dataset
+. use "GSSclean_noRDs"
+
+. 
+. ** This prevents false positives from occurring for the nepobaby, panepobaby, and m
+> anepobaby variables.
+. replace indus10 = 1 if missing(indus10)
+(5,219 real changes made)
+
+. 
+. ** Creating dummy variable for nepobaby = 1 if respondent is in the same industry a
+> s their mother or father, 0 otherwise
+. gen nepobaby = ((indus10 == paind10)|(indus10 == maind10))
+
+. ** Create variable for being in the same industry as ONLY a respondent's father. (s
+> ame false positives as nepobaby)
+. gen panepobaby = (indus10 == paind10)
+
+. ** Create variable for being in the same industry as ONLY a respondent's mother. (s
+> ame false positives as nepobaby)
+. gen manepobaby = (indus10 == maind10)
+
+. 
+. ** Getting rid of missing data
+. ** dateintv variable needed to determine hire date.
+. drop if missing(dateintv)
+(5,111 observations deleted)
+
+. ** We can only perform analysis for the respondents who answered the `yearsjob` que
+> stion.
+. drop if missing(yearsjob)
+(58,023 observations deleted)
+
+. ** Dropping observations for age not recorded - cannot accurately measure agehire w
+> ithout age.
+. drop if missing(age)
+(118 observations deleted)
+
+. * dropping because the 2022 survey year does not include necessary variables for de
+> fining a variable.
+. drop if year== 2022
+(1,863 observations deleted)
+
+. 
+. * Convert dateintv to a string for easier manipulation
+. gen dateintv_str = string(dateintv)
+
+. 
+. * Extract dayintv (last two digits)
+. gen dayintv = real(substr(dateintv_str, -2, .))
+
+. 
+. * Extract monthintv based on the length of dateintv
+. gen monthintv = .
+(7,275 missing values generated)
+
+. replace monthintv = real(substr(dateintv_str, 1, 1)) if length(dateintv_str) == 3
+(7,152 real changes made)
+
+. replace monthintv = real(substr(dateintv_str, 1, 2)) if length(dateintv_str) == 4
+(123 real changes made)
+
+. 
+. * Renaming year variable for clarity. It should be made clear that the year variabl
+> e attached to observations denotes the year they were interviewed, not the year the
+> y were hired.
+. rename year yearintv
+
+. 
+. ** This created a variable for the year and month a respondent was interviewed!
+. ** It does so in the format of a Stata date, where Jan. 1960 is considered 1 and ev
+> ery month's code after that = (months after Jan. 1960)
+. gen ymintdate = ym(yearintv, monthintv)
+
+. 
+. ** Creates a variable for the month and year a respondent was hired (assuming they 
+> were hired exactly the number of years ago they reported) which leaves us with 9,25
+> 6 variables/.
+. gen ymhiredate = ymintdate - (yearsjob * 12)
+
+. 
+. * For ease of merging FRED data
+. sort ymhiredate
+
+. 
+. * Merging FRED unemployment rate based on ymhiredate variable
+. merge m:m ymhiredate using "C:\Users\rpseely\OneDrive - Syracuse University\Documen
+> ts\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\FRED_unrate_60to2
+> 2_robust"
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                           361
+        from master                        12  (_merge==1)
+        from using                        349  (_merge==2)
+
+    matched                             7,263  (_merge==3)
+    -----------------------------------------
+
+. **** THIS NEEDS TO BE FIXED, LIKE ALTER THE DATASET SO THAT IT IS JUST ymhiredate A
+> ND DOES NOT INCLUDE ymhiredate_m3, etc.
+. 
+. * dropping the few observations that failed to merge data
+.  drop if _merge == 1
+(12 observations deleted)
+
+.  drop if _merge == 2
+(349 observations deleted)
+
+. 
+.  * Renaming the variable to match from the FRED data
+. rename UNRATE unemployrate
+
+.  
+. * Creating variable for age at time of hiring, i.e. age at ymhiredate
+. gen agehire = age - yearsjob
+
+. 
+. 
+. * Performing a test of association between being a nepobaby and being hired young
+. 
+. * Creating and defining the variable for being hired young
+. gen hireyoung = .
+(7,263 missing values generated)
+
+. 
+. replace hireyoung = 1 if (agehire > 30)
+(4,182 real changes made)
+
+. 
+. replace hireyoung = 2 if (age hire <= 30)
+(3,081 real changes made)
+
+. 
+. replace hireyoung = . if ((paind10 == .i) | (maind10 == .i))
+(3,231 real changes made, 3,231 to missing)
+
+. 
+. * Using a chi-square test to determine the relationship between being hired young a
+> nd being a nepobaby
+. tab hireyoung nepobaby, chi2
+
+           |       nepobaby
+ hireyoung |         0          1 |     Total
+-----------+----------------------+----------
+         1 |     2,078        166 |     2,244 
+         2 |     1,573        215 |     1,788 
+-----------+----------------------+----------
+     Total |     3,651        381 |     4,032 
+
+          Pearson chi2(1) =  24.8996   Pr = 0.000
+
+. * Significant association
+. 
+. * Using a logistic regression model to determine if age of hire is a significant pr
+> edictor of nepotism status
+. logit nepobaby agehire, or
+
+Iteration 0:   log likelihood = -1932.9284  
+Iteration 1:   log likelihood =  -1901.035  
+Iteration 2:   log likelihood = -1900.1205  
+Iteration 3:   log likelihood = -1900.1199  
+Iteration 4:   log likelihood = -1900.1199  
+
+Logistic regression                             Number of obs     =      7,263
+                                                LR chi2(1)        =      65.62
+                                                Prob > chi2       =     0.0000
+Log likelihood = -1900.1199                     Pseudo R2         =     0.0170
+
+------------------------------------------------------------------------------
+    nepobaby | Odds Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     agehire |   .9676508   .0041429    -7.68   0.000     .9595649    .9758049
+       _cons |   .2419224   .0344405    -9.97   0.000     .1830195    .3197826
+------------------------------------------------------------------------------
+Note: _cons estimates baseline odds.
+
+. * Significant association
+. * Odds ratio = 0.9676843 , so 3.3% decrease in likelihood of being a nepobaby assoc
+> iated with being hired each year older.
+. 
+. * Keeping observations only of target group; people hired as young adults
+. drop if agehire > 29
+(4,411 observations deleted)
+
+. * Leaves us with 2,852 observations
+. 
+. 
+. 
+. 
+. ** Chi square test of all groups of unemployment
+. 
+. * Creating variable for unemployment level hire group and defining it based on quar
+> tiles of unemployment rates
+. gen unemployrate_groups = .
+(2,852 missing values generated)
+
+. 
+. replace unemployrate_groups = 1 if unemployrate <= 4.7
+(807 real changes made)
+
+. 
+. replace unemployrate_groups = 2 if (unemployrate > 4.7) & (unemployrate <= 5.5)
+(673 real changes made)
+
+. 
+. replace unemployrate_groups = 3 if (unemployrate > 5.5) & (unemployrate < 6.8)
+(652 real changes made)
+
+. 
+. replace unemployrate_groups = 4 if unemployrate >= 6.8
+(720 real changes made)
+
+. 
+. * Cross-tabulation & chi-square test of the four groups of hiring in terms of unemp
+> loyment
+. tabulate nepobaby unemployrate_groups, chi2
+
+           |             unemployrate_groups
+  nepobaby |         1          2          3          4 |     Total
+-----------+--------------------------------------------+----------
+         0 |       736        605        585        639 |     2,565 
+         1 |        71         68         67         81 |       287 
+-----------+--------------------------------------------+----------
+     Total |       807        673        652        720 |     2,852 
+
+          Pearson chi2(3) =   2.5817   Pr = 0.461
+
+. * No significant association
+. 
+. 
+. 
+. 
+. *** START OF SENSITIVTY ANALYSIS (SA)
+. 
+. 
+. * SA FOR MINUS 3
+. drop ymhiredate_m3
+
+. gen ymhiredate_m3 = ymhiredate
+
+. 
+. drop _merge
+
+. 
+. merge m:m ymhiredate_m3 using "C:\Users\rpseely\OneDrive - Syracuse University\Docu
+> ments\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\minus3.dta"
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                           364
+        from master                         0  (_merge==1)
+        from using                        364  (_merge==2)
+
+    matched                             2,852  (_merge==3)
+    -----------------------------------------
+
+. 
+. drop if _merge == 1
+(0 observations deleted)
+
+. drop if _merge == 2
+(364 observations deleted)
+
+. 
+. 
+. ** Chi square test of all groups of unemployment (ymhiredate of 3 months earlier)
+. gen unemployrate_groups_m3 = .
+(2,852 missing values generated)
+
+. 
+. replace unemployrate_groups_m3 = 1 if unemployrate_m3 <= 4.7
+(753 real changes made)
+
+. 
+. replace unemployrate_groups_m3 = 2 if (unemployrate_m3 > 4.7) & (unemployrate_m3 <=
+>  5.5)
+(725 real changes made)
+
+. 
+. replace unemployrate_groups_m3 = 3 if (unemployrate_m3 > 5.5) & (unemployrate_m3 < 
+> 6.8)
+(658 real changes made)
+
+. 
+. replace unemployrate_groups_m3 = 4 if unemployrate_m3 >= 6.8
+(716 real changes made)
+
+. 
+. replace unemployrate_groups_m3 = . if yearsjob < 1
+(633 real changes made, 633 to missing)
+
+. 
+. * Cross-tabulation & chi-square test of the four groups of hiring in terms of unemp
+> loyment
+. tabulate nepobaby unemployrate_groups_m3, chi
+
+           |           unemployrate_groups_m3
+  nepobaby |         1          2          3          4 |     Total
+-----------+--------------------------------------------+----------
+         0 |       493        501        452        543 |     1,989 
+         1 |        45         59         55         71 |       230 
+-----------+--------------------------------------------+----------
+     Total |       538        560        507        614 |     2,219 
+
+          Pearson chi2(3) =   3.4121   Pr = 0.332
+
+. * It gives us a p-value of 0.332
+. 
+. 
+. 
+. 
+. * SA FOR MINUS 6
+. drop ymhiredate_m6
+
+. 
+. gen ymhiredate_m6 = ymhiredate
+
+. 
+. drop _merge
+
+. 
+. merge m:m ymhiredate_m6 using "C:\Users\rpseely\OneDrive - Syracuse University\Docu
+> ments\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\minus6.dta"
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                           364
+        from master                         0  (_merge==1)
+        from using                        364  (_merge==2)
+
+    matched                             2,852  (_merge==3)
+    -----------------------------------------
+
+. 
+. drop if _merge == 1
+(0 observations deleted)
+
+. drop if _merge == 2
+(364 observations deleted)
+
+. 
+. 
+. ** Chi square test of all groups of unemployment (ymhiredate of 6 months earlier)
+. gen unemployrate_groups_m6 = .
+(2,852 missing values generated)
+
+. 
+. replace unemployrate_groups_m6 = 1 if unemployrate_m6 <= 4.7
+(836 real changes made)
+
+. 
+. replace unemployrate_groups_m6 = 2 if (unemployrate_m6 > 4.7) & (unemployrate_m6 <=
+>  5.5)
+(575 real changes made)
+
+. 
+. replace unemployrate_groups_m6 = 3 if (unemployrate_m6 > 5.5) & (unemployrate_m6 < 
+> 6.8)
+(768 real changes made)
+
+. 
+. replace unemployrate_groups_m6 = 4 if unemployrate_m6 >= 6.8
+(673 real changes made)
+
+. 
+. replace unemployrate_groups_m6 = . if yearsjob < 1
+(633 real changes made, 633 to missing)
+
+. 
+. * Cross-tabulation & chi-square test of the four groups of hiring in terms of unemp
+> loyment
+. tabulate nepobaby unemployrate_groups_m6, chi
+
+           |           unemployrate_groups_m6
+  nepobaby |         1          2          3          4 |     Total
+-----------+--------------------------------------------+----------
+         0 |       528        478        458        525 |     1,989 
+         1 |        53         46         61         70 |       230 
+-----------+--------------------------------------------+----------
+     Total |       581        524        519        595 |     2,219 
+
+          Pearson chi2(3) =   4.7168   Pr = 0.194
+
+. *  p-value of 0.205
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. * SA FOR PLUS 3
+. drop ymhiredate_p3
+
+. 
+. gen ymhiredate_p3 = ymhiredate
+
+. 
+. drop _merge
+
+. 
+. merge m:m ymhiredate_p3 using "C:\Users\rpseely\OneDrive - Syracuse University\Docu
+> ments\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\plus3.dta"
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                           369
+        from master                         4  (_merge==1)
+        from using                        365  (_merge==2)
+
+    matched                             2,848  (_merge==3)
+    -----------------------------------------
+
+. 
+. drop if _merge == 1
+(4 observations deleted)
+
+. drop if _merge == 2
+(365 observations deleted)
+
+. 
+. 
+. ** Chi square test of all groups of unemployment (ymhiredate of 6 months earlier)
+. gen unemployrate_groups_p3 = .
+(2,848 missing values generated)
+
+. 
+. replace unemployrate_groups_p3 = 1 if unemployrate_p3 <= 4.7
+(793 real changes made)
+
+. 
+. replace unemployrate_groups_p3 = 2 if (unemployrate_p3 > 4.7) & (unemployrate_p3 <=
+>  5.5)
+(726 real changes made)
+
+. 
+. replace unemployrate_groups_p3 = 3 if (unemployrate_p3 > 5.5) & (unemployrate_p3 < 
+> 6.8)
+(614 real changes made)
+
+. 
+. replace unemployrate_groups_p3 = 4 if unemployrate_p3 >= 6.8
+(715 real changes made)
+
+. 
+. replace unemployrate_groups_p3 = . if yearsjob < 1
+(633 real changes made, 633 to missing)
+
+. 
+. * Cross-tabulation & chi-square test of the four groups of hiring in terms of unemp
+> loyment
+. tabulate nepobaby unemployrate_groups_p3, chi
+
+           |           unemployrate_groups_p3
+  nepobaby |         1          2          3          4 |     Total
+-----------+--------------------------------------------+----------
+         0 |       508        445        528        504 |     1,985 
+         1 |        49         55         62         64 |       230 
+-----------+--------------------------------------------+----------
+     Total |       557        500        590        568 |     2,215 
+
+          Pearson chi2(3) =   2.1976   Pr = 0.532
+
+. * p-value of 0.527
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. * SA FOR PLUS 6
+. drop ymhiredate_p6
+
+. 
+. gen ymhiredate_p6 = ymhiredate
+
+. 
+. drop _merge
+
+. 
+. merge m:m ymhiredate_p6 using "C:\Users\rpseely\OneDrive - Syracuse University\Docu
+> ments\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\plus6.dta"
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                           369
+        from master                         2  (_merge==1)
+        from using                        367  (_merge==2)
+
+    matched                             2,846  (_merge==3)
+    -----------------------------------------
+
+. 
+. drop if _merge == 1
+(2 observations deleted)
+
+. drop if _merge == 2
+(367 observations deleted)
+
+. 
+. 
+. ** Chi square test of all groups of unemployment (ymhiredate of 6 months earlier)
+. gen unemployrate_groups_p6 = .
+(2,846 missing values generated)
+
+. 
+. replace unemployrate_groups_p6 = 1 if unemployrate_p6 <= 4.7
+(836 real changes made)
+
+. 
+. replace unemployrate_groups_p6 = 2 if (unemployrate_p6 > 4.7) & (unemployrate_p6 <=
+>  5.5)
+(670 real changes made)
+
+. 
+. replace unemployrate_groups_p6 = 3 if (unemployrate_p6 > 5.5) & (unemployrate_p6 < 
+> 6.8)
+(589 real changes made)
+
+. 
+. replace unemployrate_groups_p6 = 4 if unemployrate_p6 >= 6.8
+(751 real changes made)
+
+. 
+. replace unemployrate_groups_p6 = . if yearsjob < 1
+(633 real changes made, 633 to missing)
+
+. 
+. * Cross-tabulation & chi-square test of the four groups of hiring in terms of unemp
+> loyment
+. tabulate nepobaby unemployrate_groups_p6, chi2
+
+           |           unemployrate_groups_p6
+  nepobaby |         1          2          3          4 |     Total
+-----------+--------------------------------------------+----------
+         0 |       506        443        514        520 |     1,983 
+         1 |        49         43         68         70 |       230 
+-----------+--------------------------------------------+----------
+     Total |       555        486        582        590 |     2,213 
+
+          Pearson chi2(3) =   5.1171   Pr = 0.163
+
+. * p-value of 0.163
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. * Testing the correlation between the nepotism ratio (ratio of nepobabies to all wo
+> rkers) and the unemployment rate
+. 
+. * Creating the nepotism ratio variable, which is the ratio of nepobabies to all wor
+> kers at each unemployment rate
+. egen nepobaby_1 = total(nepobaby == 1), by(unemployrate)
+
+. egen nepobaby_0 = total(nepobaby == 0 | nepobaby == 1), by(unemployrate)
+
+. gen nepobaby_ratio = nepobaby_1 / nepobaby_0
+
+. 
+. 
+. * Correlation between nepobaby : all workers ratio and the unemployment rate
+. pwcorr nepobaby_ratio unemployrate, sig
+
+             | nepoba~o unempl~e
+-------------+------------------
+nepobaby_r~o |   1.0000 
+             |
+             |
+unemployrate |   0.0979   1.0000 
+             |   0.0000
+             |
+
+. * weak but significant relationship (0.0979 correlation)
+. 
+. *Showing the realtionship graphically with a scatter plot and best-fit line
+. twoway (scatter nepobaby_ratio unemployrate, legend(label(1 "Ratio of Nepobabies to
+>  All Workers"))) ///
+>        (lfit nepobaby_ratio unemployrate, legend(label(2 "Fit Line"))), ///
+>        ytitle("Nepotism Ratio") xtitle("Unemployment Rate") 
+
+.            
+.            
+. * Using a logistic regression to determine if the unemployment rate is a significan
+> t predictor of nepotism status.
+. logistic nepobaby unemployrate
+
+Logistic regression                             Number of obs     =      2,846
+                                                LR chi2(1)        =       0.66
+                                                Prob > chi2       =     0.4183
+Log likelihood = -930.12068                     Pseudo R2         =     0.0004
+
+------------------------------------------------------------------------------
+    nepobaby | Odds Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+unemployrate |   1.032062   .0399865     0.81   0.415     .9565919    1.113487
+       _cons |   .0931502   .0221196   -10.00   0.000     .0584865    .1483583
+------------------------------------------------------------------------------
+Note: _cons estimates baseline odds.
+
+. * p-value = 0.408
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. * Creating variables for the ratios of nepobabies to all workers at each unemployme
+> nt level as defined in the chi-square test. This code will be used to create a grap
+> hic that pairs with the chi-square analysis. This section ends with the "graph bar"
+>  command
+. 
+. * Defining the ratios for each unemployment level and their defining unemployment r
+> ates
+. gen nepo_lowu = .
+(2,846 missing values generated)
+
+. replace nepo_lowu = 1 if unemployrate <= 4.7 & nepobaby == 1
+(71 real changes made)
+
+. replace nepo_lowu = 0 if unemployrate <= 4.7 & nepobaby == 0
+(736 real changes made)
+
+. 
+. 
+. gen nepo_midlu = .
+(2,846 missing values generated)
+
+. replace nepo_midlu = 1 if (unemployrate > 4.7) & (unemployrate <= 5.5) & nepobaby =
+> = 1
+(68 real changes made)
+
+. replace nepo_midlu = 0 if (unemployrate > 4.7) & (unemployrate <= 5.5) & nepobaby =
+> = 0
+(599 real changes made)
+
+. 
+. gen nepo_midhu = .
+(2,846 missing values generated)
+
+. replace nepo_midhu = 1 if (unemployrate > 5.5) & (unemployrate < 6.8) & nepobaby ==
+>  1
+(67 real changes made)
+
+. replace nepo_midhu = 0 if (unemployrate > 5.5) & (unemployrate < 6.8) & nepobaby ==
+>  0
+(585 real changes made)
+
+. 
+. gen nepo_highu = .
+(2,846 missing values generated)
+
+. replace nepo_highu = 1 if unemployrate >= 6.8 & nepobaby == 1
+(81 real changes made)
+
+. replace nepo_highu = 0 if unemployrate >= 6.8 & nepobaby == 0
+(639 real changes made)
+
+. 
+. gen allhire_highu = (unemployrate >= 6.8)
+
+. 
+. gen allhire_lowu = (unemployrate <= 4.7)
+
+. 
+. gen allhire_midlu = (unemployrate > 4.7) & (unemployrate <= 5.5)
+
+. 
+. gen allhire_midhu = (unemployrate > 5.5) & (unemployrate < 6.8)
+
+. 
+. 
+. * Calculate the number of observations where nepo_highu = 1
+. egen nepo_highu_1 = total(nepo_highu == 1)
+
+. 
+. * Calculate the number of observations where allhire_highu = 1
+. egen allhire_highu_1 = total(allhire_highu == 1)
+
+. 
+. * Calculate the ratio
+. gen ratio_high = nepo_highu_1 / allhire_highu_1
+
+. 
+. * To view the ratio of nepobabies hired in high unemployment to all workers hired i
+> n high unemployment
+. tab ratio_high
+
+ ratio_high |      Freq.     Percent        Cum.
+------------+-----------------------------------
+      .1125 |      2,846      100.00      100.00
+------------+-----------------------------------
+      Total |      2,846      100.00
+
+. * With four groups the ratio is 0.1125
+. 
+. 
+. 
+. * Calculate the number of observations where nepo_lowu = 1
+. egen nepo_lowu_1 = total(nepo_lowu == 1)
+
+. 
+. * Calculate the number of observations where allhire_lowu = 1
+. egen allhire_lowu_1 = total(allhire_lowu == 1)
+
+. 
+. * Calculate the ratio
+. gen ratio_low = nepo_lowu_1 / allhire_lowu_1
+
+. 
+. * To view the ratio of nepobabies hired in low unemployment to all workers hired in
+>  low unemployment
+. tab ratio_low
+
+  ratio_low |      Freq.     Percent        Cum.
+------------+-----------------------------------
+   .0879802 |      2,846      100.00      100.00
+------------+-----------------------------------
+      Total |      2,846      100.00
+
+. * Four groups ratio is now 0.0879802
+. 
+. 
+. * Calculate the number of observations where nepo_midu = 1
+. egen nepo_midhu_1 = total(nepo_midhu == 1)
+
+. 
+. * Calculate the number of observations where allhire_midu = 1
+. egen allhire_midhu_1 = total(allhire_midhu == 1)
+
+. 
+. * Calculate the ratio
+. gen ratio_midh = nepo_midhu_1 / allhire_midhu_1
+
+. 
+. * To view the ratio of nepobabies hired in "middle-high" unemployment to all worker
+> s hired in "middle-high" unemployment
+. tab ratio_midh
+
+ ratio_midh |      Freq.     Percent        Cum.
+------------+-----------------------------------
+   .1027607 |      2,846      100.00      100.00
+------------+-----------------------------------
+      Total |      2,846      100.00
+
+. * Ratio is 0.1027607
+. 
+. 
+. * Calculate the number of observations where nepo_midu = 1
+. egen nepo_midlu_1 = total(nepo_midlu == 1)
+
+. 
+. * Calculate the number of observations where allhire_midu = 1
+. egen allhire_midlu_1 = total(allhire_midlu == 1)
+
+. 
+. * Calculate the ratio
+. gen ratio_midl = nepo_midlu_1 / allhire_midlu_1
+
+. 
+. * To view the ratio of nepobabies hired in "middle-low" unemployment to all workers
+>  hired in "middle-low" unemployment
+. tab ratio_midl
+
+ ratio_midl |      Freq.     Percent        Cum.
+------------+-----------------------------------
+    .101949 |      2,846      100.00      100.00
+------------+-----------------------------------
+      Total |      2,846      100.00
+
+. * Ratio is 0.101949
+. 
+. 
+. *To graphically view the relationships of all the ratios
+.  graph bar (mean) ratio_high (mean) ratio_midh (mean) ratio_midl (mean) ratio_low, 
+> blabel(bar) ytitle("Nepobaby Ratio") legend(order(1 "high unemployment" 2 "mid-high
+>  unemployment" 3 "mid-low unemployment" 4 "low unemployment"))
+
+. 
+. 
+. 
+. * TESTING NEPOBABY DEMOGRAPHICS
+.  
+. 
+.  
+. * Testing to see how nepobaby rates change with gender of parent and child
+. 
+. 
+. * Chi-square test for the association between gender of respondent and gender of a 
+> parent 
+. 
+. gen neposex = 1 if sex == 1
+(1,382 missing values generated)
+
+. replace neposex = 2 if sex == 2
+(1,382 real changes made)
+
+. replace neposex = . if nepobaby == 0
+(2,559 real changes made, 2,559 to missing)
+
+. gen nepoparentsex = 1 if (indus10 == paind10)
+(2,677 missing values generated)
+
+. replace nepoparentsex = 2 if (indus10 == maind10)
+(142 real changes made)
+
+. replace nepoparentsex = . if (indus10 != paind10 & indus10 != maind10)
+(0 real changes made)
+
+. replace nepoparentsex = . if (paind10 == maind10)
+(24 real changes made, 24 to missing)
+
+. 
+. tab neposex nepoparentsex, chi2
+
+           |     nepoparentsex
+   neposex |         1          2 |     Total
+-----------+----------------------+----------
+         1 |       116         34 |       150 
+         2 |        29         84 |       113 
+-----------+----------------------+----------
+     Total |       145        118 |       263 
+
+          Pearson chi2(1) =  69.5578   Pr = 0.000
+
+. * Very strong result with a p-value of 0.000
+. 
+. 
+. * Creating a stacked bar graph to represent this relationship
+. gen nepodad = 1 if indus10 == paind10
+(2,677 missing values generated)
+
+. replace nepodad = . if nepobaby == 0
+(0 real changes made)
+
+. replace nepodad = . if (paind10 == maind10)
+(24 real changes made, 24 to missing)
+
+. gen nepomom = 1 if indus10 == maind10
+(2,704 missing values generated)
+
+. replace nepomom = . if nepobaby == 0
+(0 real changes made)
+
+. replace nepomom = . if (paind10 == maind10)
+(24 real changes made, 24 to missing)
+
+. tab nepodad
+
+    nepodad |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        145      100.00      100.00
+------------+-----------------------------------
+      Total |        145      100.00
+
+. tab nepomom
+
+    nepomom |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        118      100.00      100.00
+------------+-----------------------------------
+      Total |        118      100.00
+
+. 
+. gen neposex_label = ""
+(2,846 missing values generated)
+
+. replace neposex_label = "Male Nepobaby" if sex == 1
+variable neposex_label was str1 now str13
+(1,464 real changes made)
+
+. replace neposex_label = "Female Nepobaby" if sex == 2
+variable neposex_label was str13 now str15
+(1,382 real changes made)
+
+. 
+. graph bar (count) nepodad nepomom, over(neposex_label) ///
+>     stack ///
+>     legend(label(1 "Nepotistic Father") label(2 "Nepotistic Mother")) ///
+>         ytitle("Nepobaby Count")
+
+. 
+. 
+. * RACE
+. tab nepobaby race, chi2
+
+           |        race of respondent
+  nepobaby |     white      black      other |     Total
+-----------+---------------------------------+----------
+         0 |     1,855        430        274 |     2,559 
+         1 |       222         39         26 |       287 
+-----------+---------------------------------+----------
+     Total |     2,077        469        300 |     2,846 
+
+          Pearson chi2(2) =   3.1192   Pr = 0.210
+
+. * p-value = 0.210 so this yields an insignificant result
+. 
+. 
+. * GENDER
+. tab nepobaby sex, chi2
+
+           |    respondents sex
+  nepobaby |      male     female |     Total
+-----------+----------------------+----------
+         0 |     1,304      1,255 |     2,559 
+         1 |       160        127 |       287 
+-----------+----------------------+----------
+     Total |     1,464      1,382 |     2,846 
+
+          Pearson chi2(1) =   2.3720   Pr = 0.124
+
+. * p-value = 0.124, so no strong association
+. 
+. 
+. * CLASS (self-reported)
+. 
+. 
+. * Creating a chi-square test for nepobaby and class
+. tab nepobaby class, chi2
+
+           |       subjective class identification
+  nepobaby | lower cla  working c  middle cl  upper cla |     Total
+-----------+--------------------------------------------+----------
+         0 |       113      1,380      1,000         60 |     2,553 
+         1 |         8        155        118          6 |       287 
+-----------+--------------------------------------------+----------
+     Total |       121      1,535      1,118         66 |     2,840 
+
+          Pearson chi2(3) =   1.9491   Pr = 0.583
+
+. * This yields an insignifcant result
+. 
+. 
+. * EDUCATION 
+. 
+. * Creating a two-sample t-test for average education of nepobabies and non-nepobabi
+> es
+. 
+. gen educ_notnepo = educ
+(2 missing values generated)
+
+. replace educ_notnepo = . if nepobaby == 1
+(287 real changes made, 287 to missing)
+
+. 
+. gen educ_nepo = educ
+(2 missing values generated)
+
+. replace educ_nepo = . if nepobaby == 0
+(2,559 real changes made, 2,559 to missing)
+
+. 
+. ttest educ_nepo == educ_notnepo, unpaired
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+ed~_nepo |     287    14.02787    .1609292    2.726314    13.71112    14.34463
+ed~tnepo |   2,557    13.86899    .0513614    2.597181    13.76827     13.9697
+---------+--------------------------------------------------------------------
+combined |   2,844    13.88502    .0489497    2.610445    13.78904      13.981
+---------+--------------------------------------------------------------------
+    diff |            .1588875    .1625086               -.1597592    .4775342
+------------------------------------------------------------------------------
+    diff = mean(educ_nepo) - mean(educ_notnepo)                   t =   0.9777
+Ho: diff = 0                                     degrees of freedom =     2842
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.8359         Pr(|T| > |t|) = 0.3283          Pr(T > t) = 0.1641
+
+. * insignificant result
+. 
+. * Chi-square test for years of education and nepotism status
+. tab educ nepobaby, chi2
+
+      highest year of |       nepobaby
+     school completed |         0          1 |     Total
+----------------------+----------------------+----------
+  no formal schooling |         1          0 |         1 
+                    2 |         9          0 |         9 
+                    3 |         4          0 |         4 
+                    5 |         1          0 |         1 
+                    6 |         8          4 |        12 
+                    7 |         4          0 |         4 
+                    8 |        23          2 |        25 
+                    9 |        43          2 |        45 
+                   10 |        63          7 |        70 
+                   11 |       101         12 |       113 
+                   12 |       656         87 |       743 
+                   13 |       271         25 |       296 
+                   14 |       419         32 |       451 
+                   15 |       156         14 |       170 
+                   16 |       479         57 |       536 
+                   17 |       114         11 |       125 
+                   18 |       110         15 |       125 
+                   19 |        43         10 |        53 
+                   20 |        52          9 |        61 
+----------------------+----------------------+----------
+                Total |     2,557        287 |     2,844 
+
+         Pearson chi2(18) =  26.0158   Pr = 0.099
+
+. * Not conventional at significant levels but close
+. 
+. 
+. * HOURS WORKED WEEKLY (self-reported)
+. 
+. * Two-sample t-test for hours worked
+. gen samplehrs = hrs1
+(63 missing values generated)
+
+. replace samplehrs = . if nepobaby == 1
+(287 real changes made, 287 to missing)
+
+. 
+. gen nepohrs = hrs1
+(63 missing values generated)
+
+. replace nepohrs = . if nepobaby != 1
+(2,559 real changes made, 2,559 to missing)
+
+. 
+. ttest nepohrs == samplehrs, unpaired
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+ nepohrs |     278    42.13669    .8495719    14.16519    40.46425    43.80913
+sample~s |   2,505    42.59601    .2756253    13.79504    42.05553    43.13648
+---------+--------------------------------------------------------------------
+combined |   2,783    42.55013      .26217    13.83055    42.03606    43.06419
+---------+--------------------------------------------------------------------
+    diff |           -.4593173    .8744328                -2.17392    1.255286
+------------------------------------------------------------------------------
+    diff = mean(nepohrs) - mean(samplehrs)                        t =  -0.5253
+Ho: diff = 0                                     degrees of freedom =     2781
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.2997         Pr(|T| > |t|) = 0.5994          Pr(T > t) = 0.7003
+
+. * This yields an insignificant difference between the two, p = 0.7003 (for nepobabi
+> es working more hours) and p = 0.2997 (for nepobabies working fewer hours)
+. 
+. 
+. 
+. * INCOME
+. * Income variable: `realinc` is family income in base year 1986
+. 
+. 
+. 
+. * Two-sample t-test for nepobaby status vs. average income
+. 
+. gen sample_inc = realinc
+(197 missing values generated)
+
+. replace sample_inc = . if nepobaby == 1
+(287 real changes made, 287 to missing)
+
+. 
+. gen nepoinc = realinc
+(197 missing values generated)
+
+. replace nepoinc = . if nepobaby != 1
+(2,559 real changes made, 2,559 to missing)
+
+. 
+. ttest sample_inc == nepoinc, unpaired
+
+Two-sample t test with equal variances
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+sample~c |   2,382    34720.64    641.1068    31289.69    33463.46    35977.83
+ nepoinc |     267    37493.26    2059.408    33651.01    33438.45    41548.07
+---------+--------------------------------------------------------------------
+combined |   2,649     35000.1    612.8041    31540.07    33798.48    36201.72
+---------+--------------------------------------------------------------------
+    diff |           -2772.619    2035.199               -6763.361    1218.123
+------------------------------------------------------------------------------
+    diff = mean(sample_inc) - mean(nepoinc)                       t =  -1.3623
+Ho: diff = 0                                     degrees of freedom =     2647
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0866         Pr(|T| > |t|) = 0.1732          Pr(T > t) = 0.9134
+
+. * Yields a p-value of 0.0866 (for nepobabies having higher family income), so close
+>  to but insiginificant at conventional levels
+. 
+. 
+. 
+. * JOB SAFETY
+. 
+. * Creating variable for high income nepobabies (make greater than or equal to the 9
+> 0th percentile of income: 66220)
+. 
+. * Creating chi-square test for nepobaby and job safety
+. tab nepobaby joblose, chi2
+
+           |           is r likely to lose job
+  nepobaby | very like  fairly li  not too l  not likel |     Total
+-----------+--------------------------------------------+----------
+         0 |        69         72        386        936 |     1,463 
+         1 |        10          3         32        120 |       165 
+-----------+--------------------------------------------+----------
+     Total |        79         75        418      1,056 |     1,628 
+
+          Pearson chi2(3) =   8.2233   Pr = 0.042
+
+. * This yielded a significant result with a p-value of 0.042
+. 
+. * Creating bar graph to represent this test
+. * Setting up variables to be used in bar graph
+. gen nepo_safe = (nepobaby == 1 & joblose == 4)
+
+. 
+. replace nepo_safe = . if nepobaby == 0
+(2,559 real changes made, 2,559 to missing)
+
+. replace nepo_safe = . if missing(joblose)
+(122 real changes made, 122 to missing)
+
+. 
+. gen sample_safe = (joblose == 4)
+
+. replace sample_safe = . if missing(joblose)
+(1,218 real changes made, 1,218 to missing)
+
+. 
+. graph bar (mean) sample_safe (mean) nepo_safe, title(`"Job Safety for Nepobabies an
+> d Sample"')
+
+. 
+. 
+end of do-file
+
+. log close
+      name:  <unnamed>
+       log:  C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercis
+> es\course-project-nepobabies\DoFiles\nepobabies.log
+  log type:  text
+ closed on:   8 Jun 2024, 02:22:14
+-------------------------------------------------------------------------------------

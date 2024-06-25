@@ -1,8 +1,17 @@
 * Direct file path
 cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data"
 
+
 * Direct Stata to use the cleaned GSS dataset
 use "GSSclean_noRDs"
+
+cd "C:\Users\rpseely\Downloads"
+use "gss7222_r1.dta"
+
+cd "C:\Users\rpseely\Downloads\GSS_stata\GSS_stata_unzipd"
+use "gss7222_r3a.dta"
+
+
 
 ** This prevents false positives from occurring for the nepobaby, panepobaby, and manepobaby variables.
 replace indus10 = 1 if missing(indus10)

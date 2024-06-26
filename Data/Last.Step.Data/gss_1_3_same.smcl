@@ -1,0 +1,18 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+       {txt}log:  {res}C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\gss_1_3_same.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}25 Jun 2024, 12:23:24
+
+{com}. close log
+{err}command {bf}close{sf} is unrecognized
+{txt}{search r(199), local:r(199);}
+
+{com}. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data\gss_1_3_same.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}25 Jun 2024, 12:23:33
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

@@ -5,7 +5,7 @@
 #### Accessing General Social Survey Dataset
 1. On the [GSS website](https://gss.norc.org/get-the-data/stata), one can obtain the 1972-2022 General Social Survey dataset. One must click the hyperlink named "GSS 1972-2022 Cross-Sectional Cumulative Data (Release 3a, April 2024)" to download the ZIP folder containing the dataset, which is titled "gss7222_r3a.dta". One must then extract the contents from the ZIP folder, and then can use the gss7222_r3a.dta file to replicate our results.
 
-2. After downloading the gss7222_r3a.dta file, we use the following lines of code to keep only the variables we were interested in looking at, allowing us to reduce the size of the file and the number of irrelevant variables. Use the [gss.cleaner do file](https://github.com/ecn310/course-project-nepobabies/blob/09b46a21a084770fb3a5cbc176bfefd2eb4eec00/.github/gss.cleaner) to only keep the necessary variables. It is important to note that we did not use all of those variables for varying reasons, mostly that observations were not taken during any or most of our survey years.
+2. After downloading the gss7222_r3a.dta file, we use the following lines of code to keep only the variables we were interested in looking at, allowing us to reduce the size of the file and the number of irrelevant variables. Use the [gss.cleaner do file](https://github.com/ecn310/course-project-nepobabies/blob/main/DoFiles/gss.cleaner) to only keep the necessary variables. It is important to note that we did not use all of those variables for varying reasons, mostly that observations were not taken during any or most of our survey years.
 
 3. We saved that dataset as a .dta file and titled it "GSSclean_noRDs"
 

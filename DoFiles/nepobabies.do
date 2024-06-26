@@ -1,16 +1,18 @@
-* Direct file path
+* Direct file path to use the cleaned dataset from GitHub
 cd "C:\Users\rpseely\OneDrive - Syracuse University\Documents\GitHub\exercises\course-project-nepobabies\Data\Last.Step.Data"
 
-
-* Direct Stata to use the cleaned GSS dataset
+* Direct Stata to use the cleaned GSS dataset from GitHub
 use "GSSclean_noRDs"
 
+
+* File path direction and data load-in to use the original GSS dataset from OneDrive
 cd "C:\Users\rpseely\Downloads"
 use "gss7222_r1.dta"
 
+* File path direction and data load-in to use GSS dataset from the GSS website 
+* Note that the folder downloaded from the GSS website must be zipped. In this case, the folder was unzipped and titled "GSS_stata_unzipd"
 cd "C:\Users\rpseely\Downloads\GSS_stata\GSS_stata_unzipd"
 use "gss7222_r3a.dta"
-
 
 
 ** This prevents false positives from occurring for the nepobaby, panepobaby, and manepobaby variables.

@@ -3,9 +3,9 @@
 
 
 #### Accessing General Social Survey Dataset
-1. In our [OneDrive folder](https://sumailsyr-my.sharepoint.com/personal/rhrabino_syr_edu/_layouts/15/onedrive.aspx?ct=1696616219053&or=OWA%2DNT&cid=87642c6f%2D751b%2Dbfc3%2D8c20%2D489c586e0930&fromShare=true&ga=1&id=%2Fpersonal%2Frhrabino%5Fsyr%5Fedu%2FDocuments%2FECN%20310%20Project), one can find the original dataset given to us by Professor Zhu containing the 1972-2022 General Social Survey dataset. The title of the file containing the dataset is "gss7222_r1.dta"
+1. On the [GSS website](https://gss.norc.org/get-the-data/stata)), one can obtain the 1972-2022 General Social Survey dataset. One must click the hyperlink named "GSS 1972-2022 Cross-Sectional Cumulative Data (Release 3a, April 2024)" to download the ZIP folder containing the dataset, which is titled "gss7222_r3a.dta". One must then extract the contents from the ZIP folder, and then can use the gss7222_r3a.dta file to replicate our results.
 
-2. After downloading the gss7222_r1.dta file, we use the following lines of code to keep only the variables we were interested in looking at, allowing us to reduce the size of the file and the number of irrelevant variables. Use the [gss.cleaner do file](https://github.com/ecn310/course-project-nepobabies/blob/09b46a21a084770fb3a5cbc176bfefd2eb4eec00/.github/gss.cleaner) to only keep the necessary variables. It is important to note that we did not use all of those variables for varying reasons, mostly that observations were not taken during any or most of our survey years.
+2. After downloading the gss7222_r3a.dta file, we use the following lines of code to keep only the variables we were interested in looking at, allowing us to reduce the size of the file and the number of irrelevant variables. Use the [gss.cleaner do file](https://github.com/ecn310/course-project-nepobabies/blob/09b46a21a084770fb3a5cbc176bfefd2eb4eec00/.github/gss.cleaner) to only keep the necessary variables. It is important to note that we did not use all of those variables for varying reasons, mostly that observations were not taken during any or most of our survey years.
 
 3. We saved that dataset as a .dta file and titled it "GSSclean_noRDs"
 

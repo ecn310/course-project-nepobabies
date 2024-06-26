@@ -4,7 +4,7 @@
 
 
 * Load the dataset into Stata
-use "gss7222_r1"
+use "gss7222_r3a"
 
 * Remove uneccesary variables
 keep year rincome age dateintv educ paeduc maeduc jobinc jobsec jobpay ///
